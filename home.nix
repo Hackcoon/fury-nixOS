@@ -9,27 +9,27 @@
 # MANAGED HERE (user-level things):
 #   - git identity + delta pager
 #   - EDITOR/VISUAL (vscodium)
-#   - default applications (xdg.mimeApps): browser=brave, mail=
-#     mailspring, pdf=sioyek, epub=okular + all URL-scheme handlers
 #   - kitty terminal (font, pure black bg, scrollback)
 #   - btop (imported from the previous hand-managed btop.conf)
 #
-# DELIBERATELY STILL SYSTEM-LEVEL (see modules/programs/shell.nix):
-#   - zsh itself, aliases, oh-my-zsh, zoxide/fzf init — single-user
-#     machine; moving them gains nothing and couples recovery of
-#     admin aliases to HM working.
+# DELIBERATELY STILL SYSTEM-LEVEL:
+#   - zsh, aliases, oh-my-zsh, zoxide/fzf init (modules/programs/shell.nix)
+#     — single-user machine; moving them gains nothing and couples
+#     recovery of admin aliases to HM working.
+#   - default applications + sioyek dark-mode config
+#     (modules/core/default-apps.nix) — KDE apps atomically rewrite
+#     ~/.config/mimeapps.list, which de-symlinks any HM-managed
+#     user-level file and collides with backups on activation;
+#     /etc/xdg (system level) is never touched by user apps, and
+#     sioyek reads its prefs from every XDG_CONFIG_DIRS path.
 #
 # DELIBERATELY NOT MANAGED:
 #   - user apps in home.packages (single user — no benefit yet)
 #   - vscodium settings.json (app rewrites it at runtime)
+#   - okular's okularpartrc (app rewrites it on exit)
 #   - app data dirs (obsidian/anytype/opencode own their state)
 #   - secrets of any kind (see modules/programs/ai-services.nix
 #     header for the sops-nix/agenix pattern)
-#
-# NOTE: xdg.mimeApps takes over ~/.config/mimeapps.list with a
-# read-only symlink. KDE's "default applications" GUI can no longer
-# write it — change defaults HERE, rebuild. The previous hand file
-# was backed up to mimeapps.list~<hash> on first activation.
 { config, pkgs, lib, ... }:
 
 {
@@ -73,74 +73,6 @@
   programs.delta = {
     enable = true;
     enableGitIntegration = true;
-  };
-
-  # ----------------------------------------------------------------
-  # Default applications (xdg.mimeApps)
-  # ----------------------------------------------------------------
-  # Takes over ~/.config/mimeapps.list (read-only). All previous
-  # hand-made associations were migrated here 2026-09-06 — nothing
-  # dropped. Desktop-file names verified against the installed
-  # packages in /run/current-system/sw/share/applications/.
-  xdg.mimeApps = {
-    enable = true;
-
-    # "Open with this by default" per file type / URL scheme.
-    defaultApplications = {
-      # --- requested defaults ---
-      # PDFs: sioyek (research-paper viewer; the working wrapper
-      # lives in modules/packages/apps-fixed.nix)
-      "application/pdf" = "sioyek.desktop";
-      # EPub: okular — sioyek is PDF-ONLY (upstream: "a PDF viewer
-      # for technical books and research papers"); the old hand
-      # config pointed epub at sioyek, which failed to open.
-      "application/epub+zip" = "okularApplication_epub.desktop";
-      # Browser: brave (com.brave.Browser.desktop is the canonical
-      # name; brave-browser.desktop is a compat alias)
-      "x-scheme-handler/http" = "com.brave.Browser.desktop";
-      "x-scheme-handler/https" = "com.brave.Browser.desktop";
-      "text/html" = "com.brave.Browser.desktop";
-      # Mail client: mailspring
-      "x-scheme-handler/mailto" = "Mailspring.desktop";
-
-      # --- migrated from the previous hand-managed file ---
-      "x-scheme-handler/cherrystudio" = "cherry-studio.desktop";
-      "x-scheme-handler/discord" = "vesktop.desktop";
-      "x-scheme-handler/notion" = "notion-app-enhanced.desktop";
-      "x-scheme-handler/obsidian" = "obsidian.desktop";
-      "x-scheme-handler/opencode" = "opencode-desktop.desktop";
-      "x-scheme-handler/heroic" = "com.heroicgameslauncher.hgl.desktop";
-      "x-scheme-handler/lmstudio" = "lm-studio.desktop";
-      "x-scheme-handler/logseq" = "Logseq.desktop";
-      "x-scheme-handler/mailspring" = "Mailspring.desktop";
-    };
-
-    # "Show in the Open With menu" lists (migrated as-is).
-    associations.added = {
-      "application/epub+zip" = [
-        "sioyek.desktop"
-        "okularApplication_epub.desktop"
-        "onlyoffice-desktopeditors.desktop"
-      ];
-      "application/pdf" = "sioyek.desktop";
-      "x-scheme-handler/cherrystudio" = [ "cherry-studio.desktop" "CherryStudio.desktop" ];
-      "x-scheme-handler/discord" = "vesktop.desktop";
-      "x-scheme-handler/notion" = "notion-app-enhanced.desktop";
-      "x-scheme-handler/obsidian" = [ "obsidian.desktop" "md.Obsidian.desktop" ];
-      "x-scheme-handler/opencode" = [ "opencode-desktop.desktop" "opencode-ai-desktop.desktop" ];
-      "x-scheme-handler/heroic" = "com.heroicgameslauncher.hgl.desktop";
-      "x-scheme-handler/lmstudio" = [ "lm-studio.desktop" "LM-Studio.desktop" ];
-      "x-scheme-handler/logseq" = "Logseq.desktop";
-    };
-
-    # Apps deliberately hidden from "Open With" for a type
-    # (migrated as-is).
-    associations.removed = {
-      "application/epub+zip" = [
-        "org.kde.ark.desktop"
-        "org.prismlauncher.PrismLauncher.desktop"
-      ];
-    };
   };
 
   # ----------------------------------------------------------------

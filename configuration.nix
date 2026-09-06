@@ -18,6 +18,7 @@
     ./modules/core/nix.nix
     ./modules/core/locale.nix
     ./modules/core/network.nix
+    ./modules/core/default-apps.nix
 
     # --- hardware ---
     ./modules/hardware/nvidia.nix
