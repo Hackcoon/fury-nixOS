@@ -1,0 +1,44 @@
+# NVIDIA proprietary driver (TU116 card) + graphics stack.
+{ config, pkgs, lib, ... }:
+
+{
+  # Required for the proprietary NVIDIA driver
+  nixpkgs.config.allowUnfree = true;
+
+  # Load the proprietary NVIDIA driver for both X11 and Wayland
+  services.xserver.videoDrivers = [ "nvidia" ];
+
+  hardware.nvidia = {
+    # Saves VRAM contents to disk before sleep and restores on wake —
+    # prevents KWin/Plasma from losing display buffers and crashing
+    # on resume.
+    powerManagement.enable = true;
+
+    # Kernel Mode Setting — required for proper display mode
+    # restoration on wake and mandatory for Wayland compositors.
+    modesetting.enable = true;
+
+    open = false;            # proprietary userspace (best for TU116)
+    nvidiaSettings = true;
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
+  };
+
+  environment.sessionVariables = {
+    # Direct GLX apps to NVIDIA driver
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+
+    # Hardware acceleration — keep disabled for now (breaks vesktop).
+    # LIBVA_DRIVER_NAME = "nvidia";
+
+    # Forces Electron/Chromium apps native Wayland — breaks upscayl
+    # and vesktop, which is why packages/apps-fixed.nix wraps them
+    # back to X11.
+    # NIXOS_OZONE_WL = "1";
+  };
+
+  # OpenGL/graphics support, including 32-bit for gaming
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+  };
+}

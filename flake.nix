@@ -89,25 +89,18 @@
 
 
     # ----------------------------------------------------------
-    # Future Home Manager Input
+    # Home Manager Input
     # ----------------------------------------------------------
-    # Home Manager is not enabled yet.
+    # Home Manager manages user-level ("dotfile") configuration:
+    # git config, shell setup, editor settings, user packages.
     #
-    # Add it later when you are ready to manage user-specific
-    # settings such as:
-    #
-    # - Zsh aliases and plugins
-    # - Kitty configuration
-    # - Git configuration
-    # - User-level packages
-    # - Hyprland user settings
-    # - Environment variables
-    #
-    # Do not uncomment these lines until you have created a
-    # home.nix file and are ready to configure Home Manager.
-    #
-    # home-manager.url = "github:nix-community/home-manager";
-    # home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    # Wired via home.nix. release-26.05 matches this flake's
+    # nixos-26.05 nixpkgs: HM and nixpkgs release branches must
+    # correspond or HM warns about version skew. inputs.nixpkgs.follows
+    # makes user packages and system packages share ONE nixpkgs
+    # evaluation (avoids "two nixpkgs" profile mismatches).
+    home-manager.url = "github:nix-community/home-manager/release-26.05";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
 
@@ -141,6 +134,9 @@
 
       # Hermes Agent NixOS/Home Manager module.
       hermes-agent,
+
+      # Home Manager — user-level (dotfile) configuration.
+      home-manager,
 
       # The "... " allows future inputs to be added without
       # requiring this function argument list to be rewritten.
@@ -275,6 +271,27 @@
             # or Podman).
             hermes-agent.nixosModules.default
 
+            # --------------------------------------------------------
+            # Home Manager (NixOS-integration mode)
+            # --------------------------------------------------------
+            # Manages user-level config for "fury" via ./home.nix.
+            # Changes apply with nixos-rebuild — no standalone
+            # `home-manager switch` needed.
+            #
+            #   useGlobalPkgs     -> HM reuses the system's nixpkgs
+            #                       config (unfree, cuda, ...), so
+            #                       user packages evaluate the same
+            #                       as system ones.
+            #   useUserPackages   -> user packages install into the
+            #                       HM profile (per-user, appears
+            #                       in ~/.nix-profile), pairing
+            #                       with users.users.fury.packages.
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.fury = import ./home.nix;
+            }
 
           ];
         };
