@@ -290,6 +290,11 @@
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
+              # When HM takes over an existing hand-made file, move it
+              # aside to *.<extension> instead of failing activation.
+              # Set once for the whole migration; entries land next to
+              # the originals (e.g. ~/.config/mimeapps.list.bak).
+              home-manager.backupFileExtension = "bak";
               home-manager.users.fury = import ./home.nix;
             }
 
