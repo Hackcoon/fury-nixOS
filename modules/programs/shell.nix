@@ -204,6 +204,11 @@
       config-log = "cd /etc/nixos && sudo git log --oneline --decorate -10";
       # Save the current configuration in a Git commit (prompts for message).
       config-save = "cd /etc/nixos && sudo git add . && sudo git commit";
+      # Save everything with an inline message: config-savem "message".
+      config-savem = "cd /etc/nixos && sudo git add -A && sudo git commit -m";
+      # Stage only chosen files: config-stage <paths...>, then config-commitm "message".
+      config-stage = "cd /etc/nixos && sudo git add";
+      config-commitm = "cd /etc/nixos && sudo git commit -m";
 
       # ---------- Compositor config Git commands ----------
       # MangoWC status / save (prompts for message).

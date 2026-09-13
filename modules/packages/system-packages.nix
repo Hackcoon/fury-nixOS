@@ -95,6 +95,7 @@
     devenv                  # Per-project dev environments (pairs with flakes)
 
     # === NETWORK & SECURITY ===
+    openssl                 # TLS toolkit (rand, certs)
     ethtool                 # Ethernet checker (also used by realtek-eee.nix)
     nmap                    # Network scanner
     dig                     # DNS lookup

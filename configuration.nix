@@ -74,6 +74,7 @@ in
     # --- services ---
     ./modules/services/printing.nix
     ./modules/services/flatpak.nix
+    ./modules/services/searxng.nix
 
     # --- users & packages ---
     ./modules/users/users.nix
