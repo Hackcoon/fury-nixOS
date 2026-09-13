@@ -20,7 +20,6 @@
     };
   };
 
-  # Uncomment when you start using MangoWC:
-  # xdg.portal.config.mango.default = [ "wlr" "gtk" ];
-  # xdg.portal.config.wlroots.default = [ "wlr" "gtk" ];
+  # MangoWC session portal routing now lives in mango-dms.nix
+  # (xdg.portal.config.mango.default = [ "wlr" "gtk" ]).
 }

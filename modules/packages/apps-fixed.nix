@@ -41,7 +41,38 @@
       postBuild = ''
         wrapProgram $out/bin/vesktop \
           --unset NIXOS_OZONE_WL \
-          --add-flags "--ozone-platform=x11"
+          --add-flags "--ozone-platform=x11 --password-store=gnome-libsecret"
+      '';
+    })
+
+    # Vesktop native Wayland: screensharing ONLY works here. The x11
+    # wrapper above blinds Chromium's capturer (no X desktop on Wayland
+    # sessions). Run this on Mango/Hyprland/Plasma when you need to share
+    # your screen — the portal picker (monitors/windows) should appear.
+    # Keep plain `vesktop` for days the native build misbehaves.
+    # NOTE: the unwrapped bin/vesktop + stock desktop file are removed so
+    # this package only provides bin/vesktop-wayland (no file collision
+    # with the plain wrapper above).
+    (pkgs.symlinkJoin {
+      name = "vesktop-wayland";
+      paths = [ pkgs.vesktop ];
+      buildInputs = [ pkgs.makeWrapper ];
+      postBuild = ''
+        rm -f $out/bin/vesktop $out/share/applications/vesktop.desktop
+        makeWrapper ${pkgs.vesktop}/bin/vesktop $out/bin/vesktop-wayland \
+          --set NIXOS_OZONE_WL 1 \
+          --add-flags "--ozone-platform=wayland --enable-features=WebRTCPipeWireCapturer --password-store=gnome-libsecret"
+        cat > $out/share/applications/vesktop-wayland.desktop <<EOF
+        [Desktop Entry]
+        Name=Vesktop (Wayland screenshare)
+        Comment=Vesktop native Wayland — use for screensharing
+        Exec=vesktop-wayland %U
+        Icon=vesktop
+        Terminal=false
+        Type=Application
+        Categories=Network;InstantMessaging;Chat;
+        StartupWMClass=vesktop
+        EOF
       '';
     })
   ];

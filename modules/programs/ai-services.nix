@@ -11,6 +11,13 @@
   # Ollama — always-on local LLM server at http://localhost:11434.
   # ollama-cuda offloads inference to the NVIDIA GPU; idle it consumes
   # nearly nothing.
+  # Manual start only (gated 2026-09-11: ollama-cuda idles on the
+  # NVIDIA GPU even with no model loaded). Start when needed with:
+  #   sudo systemctl start ollama open-webui
+  # Re-enable autostart by deleting the two wantedBy lines + rebuild.
+  systemd.services.ollama.wantedBy = lib.mkForce [];
+  systemd.services.open-webui.wantedBy = lib.mkForce [];
+
   services.ollama = {
     enable = true;
     package = pkgs.ollama-cuda;

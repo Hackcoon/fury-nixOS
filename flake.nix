@@ -79,6 +79,51 @@
     qylock.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
     # ----------------------------------------------------------
+    # Dank Material Shell 1.6 (dms)
+    # ----------------------------------------------------------
+    # Upstream flake — pinned to the v1.6.0 tag. nixpkgs only has
+    # 1.5.3 and this machine had 1.4.6. Provides the
+    # programs.dank-material-shell NixOS module (replaces the old
+    # programs.dms-shell option name from 1.4.x).
+    dms = {
+      url = "github:AvengeMedia/DankMaterialShell/v1.6.0";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
+    # ----------------------------------------------------------
+    # Dank Greeter (greetd login screen, standalone as of DMS 1.6)
+    # ----------------------------------------------------------
+    # A greetd greeter matching the DMS aesthetic. Provides
+    # programs.dms-greeter NixOS module. NOTE: this replaces SDDM
+    # as the *login* screen when enabled — KDE sessions still work
+    # through greetd's session list.
+    dank-greeter = {
+      url = "github:AvengeMedia/dank-greeter";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
+    # ----------------------------------------------------------
+    # Dank Search (dsearch) — indexed filesystem search
+    # ----------------------------------------------------------
+    # Home Manager module (programs.dsearch) + dsearch package.
+    # Runs a user service that indexes files for fuzzy search.
+    dsearch = {
+      url = "github:AvengeMedia/danksearch";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
+    # ----------------------------------------------------------
+    # Zen Browser (beta)
+    # ----------------------------------------------------------
+    # Firefox fork. Package used via specialArgs as `zenBrowser`
+    # (see outputs let-block). Follows nixpkgs-unstable for
+    # Firefox compat, same as qylock/dms.
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
+    # ----------------------------------------------------------
     # Hermes AI Agent
     # ----------------------------------------------------------
     # Provides the native NixOS module, systemd service, and
@@ -132,6 +177,14 @@
       # Qylock SDDM/Quickshell lockscreen module.
       qylock,
 
+      # Dank Material Shell 1.6 + Dank Greeter + Dank Search.
+      dms,
+      dank-greeter,
+      dsearch,
+
+      # Zen Browser flake (beta package).
+      zen-browser,
+
       # Hermes Agent NixOS/Home Manager module.
       hermes-agent,
 
@@ -168,6 +221,14 @@
         # explicitly select them with unstablePkgs.some-package.
         config.allowUnfree = true;
       };
+
+      # ==========================================================
+      # ZEN BROWSER (beta, via zen-browser-flake input)
+      # ==========================================================
+      # `packages.${system}.default` tracks Zen beta.
+      # Exposed to configuration.nix modules as `zenBrowser`
+      # via specialArgs below.
+      zenBrowser = zen-browser.packages.${system}.default;
     in
     {
       # ==========================================================
@@ -205,7 +266,7 @@
           #
           # for one intentionally selected unstable package.
           specialArgs = {
-            inherit unstablePkgs;
+            inherit unstablePkgs zenBrowser;
           };
 
 
@@ -235,6 +296,15 @@
             # This exposes the `programs.qylock` options used in
             # configuration.nix.
             qylock.nixosModules.default
+
+            # Dank Material Shell 1.6 — replaces the nixpkgs
+            # programs.dms-shell module (mango-dms.nix switched to
+            # programs.dank-material-shell).
+            dms.nixosModules.dank-material-shell
+
+            # Dank Greeter — greetd login screen matching DMS.
+            # programs.dms-greeter options wired in mango-dms.nix.
+            dank-greeter.nixosModules.default
 
           
             # Hermes Agent service module.
@@ -295,6 +365,9 @@
               # Set once for the whole migration; entries land next to
               # the originals (e.g. ~/.config/mimeapps.list.bak).
               home-manager.backupFileExtension = "bak";
+              home-manager.extraSpecialArgs = {
+                inherit dsearch zen-browser;
+              };
               home-manager.users.fury = import ./home.nix;
             }
 

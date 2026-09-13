@@ -40,5 +40,10 @@
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
+    # vulkan-loader: Brave (and other Chromium browsers with the Vulkan
+    # feature) needs libvulkan.so.1 at runtime. make-brave.nix only adds
+    # the ICD search path (XDG_DATA_DIRS), not the loader itself, so we
+    # provide it via the driver runpath.
+    extraPackages = [ pkgs.vulkan-loader ];
   };
 }

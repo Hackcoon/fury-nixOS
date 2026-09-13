@@ -30,7 +30,11 @@
 #   - app data dirs (obsidian/anytype/opencode own their state)
 #   - secrets of any kind (see modules/programs/ai-services.nix
 #     header for the sops-nix/agenix pattern)
-{ config, pkgs, lib, ... }:
+#
+# FLAKE INPUT MODULES: dsearch (danksearch) + zen-browser are passed
+# in via home-manager.extraSpecialArgs in flake.nix — see the blocks
+# at the bottom of this file.
+{ config, pkgs, lib, dsearch, zen-browser, ... }:
 
 {
   home.username = "fury";
@@ -49,6 +53,25 @@
   home.sessionVariables = {
     EDITOR = "codium --wait";
     VISUAL = "codium --wait";
+  };
+
+  # ~/.local/bin on PATH (nixos-doctor symlink lives here).
+  home.sessionPath = [ "$HOME/.local/bin" ];
+
+  # ----------------------------------------------------------------
+  # XDG + web apps (Brave --app launchers)
+  # ----------------------------------------------------------------
+  # Main Brave profile (extensions, logins). Isolated per-app
+  # profiles would lose both — see guides/web-apps-on-nixos.md.
+  xdg.enable = true;
+
+  xdg.desktopEntries.youtube = {
+    name = "YouTube";
+    exec = "brave --app=https://www.youtube.com --class=YouTube";
+    icon = "/home/fury/.local/share/icons/youtube.svg";
+    terminal = false;
+    categories = [ "AudioVideo" "Video" ];
+    settings.StartupWMClass = "YouTube";
   };
 
   # ----------------------------------------------------------------
@@ -197,6 +220,101 @@
       nvml_measure_pcie_speeds = true;
       rsmi_measure_pcie_speeds = true;
       shown_gpus = "nvidia amd intel apple";
+    };
+  };
+
+  # ----------------------------------------------------------------
+  # dsearch (danksearch) — indexed fuzzy filesystem search
+  # ----------------------------------------------------------------
+  # Flake input module (github:AvengeMedia/danksearch). Runs a user
+  # service (`systemctl --user status dsearch`) that indexes files
+  # and serves queries via the `dsearch` CLI:
+  #
+  #   dsearch search "leblanc"        # fuzzy filename search
+  #   dsearch search "config" --json  # scripting output
+  #
+  # Index paths/exclusions can be set via `programs.dsearch.config`
+  # (TOML); leaving it null lets dsearch generate runtime defaults.
+  # NOTE: Nix lists are whitespace-separated — NO commas here. Do NOT
+  # add a trailing comma after `dsearch.homeModules.default` below: the
+  # Nix parser rejects `.default,` (grammar quirk) and eval will fail.
+  imports = [
+
+    # dsearch (github:AvengeMedia/danksearch) — indexed fuzzy file search.
+    # Runs a user service (`systemctl --user status dsearch`) that indexes
+    # files and serves queries via the `dsearch` CLI:
+    #
+    #   dsearch search "leblanc"        # fuzzy filename search
+    #   dsearch search "config" --json  # scripting output
+    dsearch.homeModules.default
+
+
+    # zen-browser (github:0xc000022070/zen-browser-flake, beta channel) —
+    # Zen Browser Home Manager module. Provides `programs.zen-browser.*`
+    # (policies, profiles, userChrome, native hosts).
+    zen-browser.homeModules.beta
+
+  ];
+  programs.dsearch = {
+    enable = true;
+    # Example (defaults are fine to start):
+    # config = { paths = [ "/home/fury" ]; };
+  };
+
+  # ----------------------------------------------------------------
+  # Zen Browser (HM-managed, beta) — fast cold start + DMS theming
+  # ----------------------------------------------------------------
+  # Replaces the bare system package in modules/programs/zen.nix (now
+  # disabled there to avoid two Zens). First launch creates
+  # ~/.config/zen/<profile>/ — that run is slow once, then it's fast.
+  programs.zen-browser = {
+    enable = true;
+
+    # Keep Brave as default (see modules/core/default-apps.nix).
+    # Flip to true only if Zen should own http/https links.
+    setAsDefaultBrowser = false;
+
+    # POLICIES — enforced via policies.json, browser UI can't override.
+    # These cut the network round-trips that slow cold start.
+    policies = {
+      DisableAppUpdate = true;        # flake default; explicit is fine
+      DisableTelemetry = true;        # no telemetry ping on launch
+      DisableFirefoxStudies = true;   # no Normandy experiment fetch
+      DisablePocket = true;           # no Pocket fetch
+      DontCheckDefaultBrowser = true; # skip default-browser check
+      NoDefaultBookmarks = true;      # skip first-run bookmark init
+      OfferToSaveLogins = true;       # prompt to save logins (like Brave)
+    };
+
+    # NATIVE HOSTS — intentionally empty for Zen. Per DMS docs, Pywalfox
+    # does NOT work in Zen; Zen themes via userChrome.css below instead.
+    # Example for later (e.g. 1Password):
+    # nativeMessagingHosts = [ pkgs.firefoxpwa ];
+
+    # PROFILE `default`
+    profiles.default = {
+      # STARTUP — Tabliss on launch (it owns about:newtab once installed
+      # manually from AMO) + load old tabs only when clicked.
+      # STAY LOGGED IN (Brave-like): offer to save passwords, keep cookies
+      # until they expire instead of wiping them at shutdown.
+      settings = {
+        "browser.startup.homepage" = "about:newtab";
+        "browser.sessionstore.restore_on_demand" = true;
+        "signon.rememberSignons" = true;
+        "network.cookie.lifetimePolicy" = 0;
+        "privacy.clearOnShutdown.cookies" = false;
+        "privacy.clearOnShutdown.history" = false;
+      };
+
+      # DMS THEME — live @import of your generated zen.css (amoledBlack
+      # /red theme, refreshed by DMS on wallpaper/theme switch, no rebuild
+      # needed). NOTE: builtins.readFile can't be used here — flake eval
+      # is pure and forbids reads outside the store.
+      # One-time manual step in Zen after first launch:
+      # about:config -> toolkit.legacyUserProfileCustomizations.stylesheets = true
+      userChrome = ''
+        @import url("file:///home/fury/.config/DankMaterialShell/zen.css");
+      '';
     };
   };
 }

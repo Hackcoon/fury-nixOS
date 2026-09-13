@@ -69,6 +69,13 @@
     opencode                # AI coding agent for the terminal
     opencode-desktop        # AI coding agent desktop client
 
+    # === BROWSER THEMING (DMS Pywalfox path) ===
+    # `pywalfox` CLI (use `update`, NEVER `install` on NixOS).
+    # Manifest wiring lives in modules/programs/firefox.nix (Firefox)
+    # + home.nix (Zen uses zen.css, not this). Needs the AMO extension
+    # + ln -sf ~/.cache/wal/dank-pywalfox.json ~/.cache/wal/colors.json
+    pywalfox-native
+
     # === LANGUAGE TOOLCHAINS & COMPILERS ===
     gcc                     # C/C++ compiler
     gdb                     # C/C++ debugger
@@ -99,8 +106,15 @@
     gnupg                   # GNU Privacy Guard
 
     # === INTERNET & COMMUNICATION ===
-    brave                   # Privacy-focused browser
+    # Default Brave = smooth native build (Wayland via NIXOS_OZONE_WL hint,
+    # HW video decode flags from make-brave). Only the shared password
+    # store is forced, so logins survive window-manager switches.
+    # WebGPU lives separately in modules/packages/brave-webgpu.nix.
+    (brave.override {
+      commandLineArgs = "--password-store=gnome-libsecret";
+    })
     librewolf               # Privacy-focused Firefox fork
+    qutebrowser             # Keyboard-driven browser (vim bindings, Super+K in mango)
     stoat-desktop           # Open-source Discord alternative
     mailspring              # Email client
 
@@ -174,6 +188,7 @@
     # === THEMES & CURSORS ===
     chicago95               # Win95 total-conversion theme (GTK, icons, XFWM)
     gtk-engine-murrine      # GTK2 engine needed by Chicago95
+    papirus-icon-theme      # Papirus-Dark icons (Dolphin, see desktop/themes.nix)
     google-cursor           # Cursor theme (provides GoogleDot-* used in
                             # desktop/themes.nix — keep in sync)
     bibata-cursors          # Modern triangular cursor
