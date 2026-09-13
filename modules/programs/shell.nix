@@ -205,6 +205,17 @@
       # Save the current configuration in a Git commit (prompts for message).
       config-save = "cd /etc/nixos && sudo git add . && sudo git commit";
 
+      # ---------- Compositor config Git commands ----------
+      # MangoWC status / save (prompts for message).
+      mango-status = "git -C ~/.config/mango status";
+      mango-save = "git -C ~/.config/mango add -A && git -C ~/.config/mango commit";
+      # dwm/suckless status / save (prompts for message).
+      dwm-status = "git -C ~/.config/suckless status";
+      dwm-save = "git -C ~/.config/suckless add -A && git -C ~/.config/suckless commit";
+      # Hyprland status / save (prompts for message).
+      hypr-status = "git -C ~/.config/hypr status";
+      hypr-save = "git -C ~/.config/hypr add -A && git -C ~/.config/hypr commit";
+
       # ---------- Everyday Git commands (any repo) ----------
       gst = "git status --short --branch";   # compact status
       glog = "git log --oneline --graph --decorate -15";  # recent history
