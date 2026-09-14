@@ -17,7 +17,6 @@
 # Future custom packages: one more line here per file in ./pkgs/.
 let
   tolaria = pkgs.callPackage ./pkgs/tolaria.nix { };
-  bionic = pkgs.callPackage ./pkgs/bionic.nix { };
 in
 {
   imports = [
@@ -88,8 +87,6 @@ in
   environment.systemPackages = [
     # markdown knowledge base manager (Tolaria AppImage, custom-wrapped)
     tolaria
-    # LM Studio Bionic — agent for open models (AppImage, custom-wrapped)
-    bionic
   ];
   # ═══ YOUR HARDWARE PROFILE (this machine) — flip for other hardware ═══
   # DNS flip: "quad9" <-> "cloudflare" <-> "google" (defined in modules/core/dns.nix)
