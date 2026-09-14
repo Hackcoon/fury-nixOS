@@ -13,6 +13,9 @@
 
       # ── LinuxBeginnings / JaKooLit shared set ──
       dejavu_fonts
+      fira
+      fira-go
+      googlesans-code
       fira-code
       fira-code-symbols
       font-awesome
@@ -61,8 +64,8 @@
       enable = true;
       defaultFonts = {
         monospace = [ "JetBrainsMono Nerd Font" "FreeMono" "STIX Two Math" "Symbola" ];
-        sansSerif = [ "Noto Sans" "FreeSans" "STIX Two Text" "Symbola" ];
-        serif     = [ "Noto Serif" "FreeSerif" "STIX Two Text" "Symbola" ];
+        sansSerif = [ "Noto Sans" "Noto Sans Arabic" "IBM Plex Sans Arabic" "FreeSans" "STIX Two Text" "Symbola" ];
+        serif     = [ "Noto Serif" "Noto Naskh Arabic" "FreeSerif" "STIX Two Text" "Symbola" ];
         emoji     = [ "Noto Color Emoji" ];
       };
     };

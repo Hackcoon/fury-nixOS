@@ -108,7 +108,8 @@
     enable = true;
 
     font = {
-      name = "JetBrainsMono Nerd Font";
+      # name = "JetBrainsMono Nerd Font";
+      name = "Google Sans Code";
       size = 11.0;
     };
 
