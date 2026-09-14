@@ -1,0 +1,4 @@
+result
+*.bak*
+*.tar.gz
+result-*
