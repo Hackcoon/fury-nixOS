@@ -75,6 +75,7 @@ in
     ./modules/services/printing.nix
     ./modules/services/flatpak.nix
     ./modules/services/searxng.nix
+    ./modules/services/blocky.nix
 
     # --- users & packages ---
     ./modules/users/users.nix

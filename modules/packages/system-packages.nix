@@ -66,8 +66,8 @@
     # === AI TOOLS ===
     lmstudio                # Local LLM desktop app
     cherry-studio           # Multi-provider LLM desktop client
-    opencode                # AI coding agent for the terminal
-    opencode-desktop        # AI coding agent desktop client
+    # opencode                # AI coding agent for the terminal (stable - switched to unstable 2026-09-13)
+    # opencode-desktop        # AI coding agent desktop client (stable - switched to unstable 2026-09-13)
 
     # === BROWSER THEMING (DMS Pywalfox path) ===
     # `pywalfox` CLI (use `update`, NEVER `install` on NixOS).
@@ -215,6 +215,8 @@
 
     # === FROM UNSTABLE (nixos-unstable via flake input) ===
     unstablePkgs.llmfit     # LLM model size finder
+    unstablePkgs.opencode   # AI coding agent for the terminal (unstable = newer)
+    unstablePkgs.opencode-desktop  # AI coding agent desktop client (unstable)
   ];
 
   # Syncthing as a user service (run at login, auto-restart) — enable
