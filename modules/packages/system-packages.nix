@@ -217,6 +217,7 @@
     unstablePkgs.llmfit     # LLM model size finder
     unstablePkgs.opencode   # AI coding agent for the terminal (unstable = newer)
     unstablePkgs.opencode-desktop  # AI coding agent desktop client (unstable)
+    unstablePkgs.lmstudio-bionic  # LM Studio Bionic — agent for open models
   ];
 
   # Syncthing as a user service (run at login, auto-restart) — enable
