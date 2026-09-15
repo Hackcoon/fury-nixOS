@@ -120,7 +120,7 @@
 
     # === FILE MANAGEMENT, SYNC & ARCHIVING ===
     yazi                    # Terminal file manager (SUPER+Y in mango)
-    superfile               # Terminal file manager, binary is spf (SUPER+SHIFT+Y in mango)
+    superfile               # Terminal file manager (SUPER+SHIFT+Y in mango)
     wget                    # File downloader
     curl                    # HTTP swiss army knife
     aria2                   # Multi-connection downloader
