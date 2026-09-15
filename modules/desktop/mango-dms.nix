@@ -36,7 +36,23 @@
   # 0.16.3, so the module overrides the package with the unstable one.
   programs.mangowc = {
     enable = true;
-    package = unstablePkgs.mangowc;   # 0.16.3 — new IPC, DMS-compatible
+    # 0.17.0 (2026-09-12 milestone) — not yet in nixpkgs-unstable (still
+    # 0.16.3 as of 2026-09-13), so build from upstream tag. Same meson
+    # deps (wlroots-0.20, scenefx-0.5), only version+src overridden.
+    # TODO: drop overrideAttrs once `unstablePkgs.mangowc.version == "0.17.0"`,
+    # then revert to plain `package = unstablePkgs.mangowc;`.
+    # Breaking changes checked 2026-09-15: config has no tablet_map_to_mon /
+    # touch_map_to_mon (use devicerule if needed).
+    package = unstablePkgs.mangowc.overrideAttrs (old: {
+      version = "0.17.0";
+      src = unstablePkgs.fetchFromGitHub {
+        owner = "mangowm";
+        repo = "mango";
+        tag = "0.17.0";
+        hash = "sha256-YbAqwLYaQosrr+NI195BS93w3Fp347ZsmiP97ymwDjM=";
+      };
+    });
+    # package = unstablePkgs.mangowc;   # 0.16.3 — new IPC, DMS-compatible
     # package = pkgs.mangowc;        # stable 0.12.8 — no DMS bar support
   };
 
