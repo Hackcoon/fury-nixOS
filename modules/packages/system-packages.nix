@@ -119,6 +119,8 @@
     mailspring              # Email client
 
     # === FILE MANAGEMENT, SYNC & ARCHIVING ===
+    yazi                    # Terminal file manager (SUPER+Y in mango)
+    superfile               # Terminal file manager, binary is spf (SUPER+SHIFT+Y in mango)
     wget                    # File downloader
     curl                    # HTTP swiss army knife
     aria2                   # Multi-connection downloader
@@ -227,4 +229,11 @@
   #   openDefaultPorts = false;   # local-network syncing needs no ports
   # };
   # Check with: systemctl --user status syncthing
+
+  # Neovim terminal editor (provides vi/vim aliases).
+  # defaultEditor off while learning — micro stays the default.
+  programs.neovim = {
+    enable = true;
+    defaultEditor = false;
+  };
 }
