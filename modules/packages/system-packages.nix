@@ -116,7 +116,6 @@
     })
     librewolf               # Privacy-focused Firefox fork
     qutebrowser             # Keyboard-driven browser (vim bindings, Super+K in mango)
-    stoat-desktop           # Open-source Discord alternative
     mailspring              # Email client
 
     # === FILE MANAGEMENT, SYNC & ARCHIVING ===
