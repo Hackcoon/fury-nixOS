@@ -103,6 +103,8 @@
     pamixer                    # DMS audio widget fallback CLI
     brightnessctl              # DMS brightness widget fallback CLI
     networkmanagerapplet        # fallback tray applet
+    wofi                       # xdg-desktop-portal-wlr screencast chooser
+    wmenu                      # xdg-desktop-portal-wlr screencast chooser (alt)
   ];
 
   # =========================================================================
