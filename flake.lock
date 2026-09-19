@@ -1,5 +1,26 @@
 {
   "nodes": {
+    "concat": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1789551934,
+        "narHash": "sha256-1FTEoK0RNjVDRvZoJfmRpi2GwoqEHN0o1E3zN8rvWeg=",
+        "owner": "jub0t",
+        "repo": "Concat",
+        "rev": "39f24d9ab158fb384acdd2a7ab974bf768f80d73",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jub0t",
+        "ref": "v0.2.2",
+        "repo": "Concat",
+        "type": "github"
+      }
+    },
     "crane": {
       "locked": {
         "lastModified": 1787326676,
@@ -459,6 +480,7 @@
     },
     "root": {
       "inputs": {
+        "concat": "concat",
         "dank-greeter": "dank-greeter",
         "dms": "dms",
         "dsearch": "dsearch",

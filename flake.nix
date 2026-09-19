@@ -124,6 +124,25 @@
     };
 
     # ----------------------------------------------------------
+    # Concat video editor (native Rust build)
+    # ----------------------------------------------------------
+    # Free open-source CapCut replacement. Upstream maintains its
+    # own flake (nix build / nix run) pinned to nixos-unstable.
+    #
+    # HOW TO UPDATE:
+    #   1. Check https://github.com/jub0t/Concat/releases/latest
+    #      (e.g. v0.2.3).
+    #   2. Change ONLY the tag below: "github:jub0t/Concat/v0.2.2"
+    #      → "github:jub0t/Concat/v0.2.3".
+    #   3. Run: sudo nix flake update concat
+    #      then: sudo nixos-rebuild build --flake /etc/nixos#nixos
+    # No hash dance — the flake.lock pins the exact revision.
+    concat = {
+      url = "github:jub0t/Concat/v0.2.2";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
+    # ----------------------------------------------------------
     # Hermes AI Agent
     # ----------------------------------------------------------
     # Provides the native NixOS module, systemd service, and
@@ -185,6 +204,9 @@
       # Zen Browser flake (beta package).
       zen-browser,
 
+      # Concat video editor flake (native Rust package).
+      concat,
+
       # Hermes Agent NixOS/Home Manager module.
       hermes-agent,
 
@@ -229,6 +251,16 @@
       # Exposed to configuration.nix modules as `zenBrowser`
       # via specialArgs below.
       zenBrowser = zen-browser.packages.${system}.default;
+
+      # ==========================================================
+      # CONCAT VIDEO EDITOR (native, via upstream flake)
+      # ==========================================================
+      # `packages.${system}.concat` is the editor window (bin/concat),
+      # built from source with the wgpu renderer + Vulkan runtime libs.
+      # Exposed to configuration.nix as `concatPkg` via specialArgs.
+      # UPDATE: bump the `concat.url` tag above, then
+      #   sudo nix flake update concat
+      concatPkg = concat.packages.${system}.concat;
     in
     {
       # ==========================================================
@@ -266,7 +298,7 @@
           #
           # for one intentionally selected unstable package.
           specialArgs = {
-            inherit unstablePkgs zenBrowser;
+            inherit unstablePkgs zenBrowser concatPkg;
           };
 
 

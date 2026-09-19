@@ -7,7 +7,7 @@
 # unstablePkgs comes from flake.nix specialArgs — modules that need
 # it declare it in their argument set.
 
-{ config, pkgs, lib, unstablePkgs, ... }:
+{ config, pkgs, lib, unstablePkgs, concatPkg, ... }:
 
 # ============================================================
 # Custom packages
@@ -15,8 +15,15 @@
 # callPackage reads pkgs/<name>.nix as a function and passes it
 # exactly the dependencies it asks for by name — no manual wiring.
 # Future custom packages: one more line here per file in ./pkgs/.
+#
+# concatPkg is DIFFERENT: it comes from the upstream Concat flake
+# (flake.nix specialArgs), not from ./pkgs/. No callPackage needed.
+# To update Concat, bump the tag in flake.nix (`concat.url`), then
+#   sudo nix flake update concat
 let
   tolaria = pkgs.callPackage ./pkgs/tolaria.nix { };
+  recordly = pkgs.callPackage ./pkgs/recordly.nix { };
+  openwolf = pkgs.callPackage ./pkgs/openwolf.nix { };
 in
 {
   imports = [
@@ -83,10 +90,16 @@ in
     ./modules/packages/apps-fixed.nix
   ];
 
-  # ═══ CUSTOM PACKAGES (callPackage from ./pkgs/) ═══
+  # ═══ CUSTOM PACKAGES (callPackage from ./pkgs/ + flake pkgs) ═══
   environment.systemPackages = [
     # markdown knowledge base manager (Tolaria AppImage, custom-wrapped)
     tolaria
+    # screen recorder + editor (Recordly AppImage, custom-wrapped — see pkgs/recordly.nix header for updates)
+    recordly
+    # coding-agent memory CLI (OpenWolf npm tarball, node-wrapped — see pkgs/openwolf.nix header for updates)
+    openwolf
+    # CapCut replacement, native Rust build from upstream flake (bump tag in flake.nix to update)
+    concatPkg
   ];
   # ═══ YOUR HARDWARE PROFILE (this machine) — flip for other hardware ═══
   # DNS flip: "quad9" <-> "cloudflare" <-> "google" (defined in modules/core/dns.nix)

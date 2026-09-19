@@ -219,6 +219,7 @@
     unstablePkgs.opencode   # AI coding agent for the terminal (unstable = newer)
     unstablePkgs.opencode-desktop  # AI coding agent desktop client (unstable)
     unstablePkgs.lmstudio-bionic  # LM Studio Bionic — agent for open models
+    unstablePkgs.pi-coding-agent  # Coding agent CLI with read, bash, edit, write tools and session management
   ];
 
   # Syncthing as a user service (run at login, auto-restart) — enable
