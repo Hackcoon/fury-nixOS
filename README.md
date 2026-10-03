@@ -12,6 +12,7 @@ Everything real lives in `modules/`. Comment style and rules:
 | Desktop | GTX 1660 SUPER, Ryzen 5 3600, ext4 | Active |
 | Laptop | i7-10750H + GTX 1660 Ti Mobile (hybrid Optimus) | Commented blocks, fresh install |
 | AMD PC | Ryzen 7 7700 + RX 7800 XT (RDNA3) | Commented blocks, future build |
+| Raspberry Pi | aarch64 (any Pi 4/5) | Parked skeleton in flake.nix, untested, no ARM hardware here |
 
 `hardware-configuration.nix` is tracked once as a working example (UUIDs and
 module lists are not secrets). Per-machine regens stay uncommitted (ignored

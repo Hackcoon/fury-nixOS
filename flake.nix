@@ -447,6 +447,24 @@
 
 
       # ==========================================================
+      # RASPBERRY PI (PARKED — aarch64, untested, no ARM hardware here)
+      # ==========================================================
+      # Uncomment to start a Pi host. Deliberately minimal: no NVIDIA/CUDA,
+      # gaming, AI, or x86-only packages — those don't exist on aarch64.
+      # Requires on the Pi itself: a fresh hardware-configuration.nix,
+      # extlinux/U-Boot instead of Lanzaboote (modules/core/boot.nix Secure
+      # Boot stack does NOT apply), and either native `nixos-rebuild` on the
+      # Pi or binfmt emulation / a remote builder from x86 (slow for big
+      # closures — keep the Pi module set small).
+      # nixosConfigurations.raspberry = nixpkgs.lib.nixosSystem {
+      #   system = "aarch64-linux";
+      #   modules = [
+      #     ./configuration-pi.nix  # NOT ./configuration.nix (x86 assumptions:
+      #                             # nvidia, CUDA, proton, brave-webgpu...)
+      #   ];
+      # };
+
+      # ==========================================================
       # FUTURE OUTPUTS
       # ==========================================================
       # Nothing needs adding here right now.
