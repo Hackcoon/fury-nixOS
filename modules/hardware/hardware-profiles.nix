@@ -35,7 +35,8 @@ with lib;
         default = "offload";
         description = "PRIME mode: offload = iGPU desktop + per-app `nvidia-offload`, sync = NVIDIA renders everything (plugged-in gaming).";
       };
-      intelBusID  = mkOption { type = types.str; default = "PCI:0:2:0"; description = "Intel iGPU PCI ID — `lspci | grep VGA`, 00:02.0 -> PCI:0:2:0."; };
+      intelBusID  = mkOption { type = types.str; default = "PCI:0:2:0"; description = "Intel iGPU PCI ID — `lspci | grep VGA`, 00:02.0 -> PCI:0:2:0. Ignored on AMD+NVIDIA hybrids."; };
+      amdgpuBusID = mkOption { type = types.str; default = "PCI:5:0:0"; description = "AMD iGPU/APU PCI ID — `lspci | grep VGA`, e.g. c5:00.0 -> PCI:197:0:0 (hex bus to decimal). AMD+NVIDIA hybrids only."; };
       nvidiaBusID = mkOption { type = types.str; default = "PCI:1:0:0"; description = "NVIDIA dGPU PCI ID — `lspci | grep 3D`, 01:00.0 -> PCI:1:0:0. Wrong IDs = black screen."; };
     };
     amdgpu.enable       = mkEnableOption "AMD GPU (amdgpu kernel driver)";
@@ -91,7 +92,12 @@ with lib;
           };
           # Sync mode: dGPU renders, iGPU displays.
           sync.enable = mkDefault syncMode;
-          intelBusId  = mkDefault config.hardware-profiles.nvidia-prime.intelBusID;
+          # Intel+NVIDIA hybrid (ignored when the amdgpu profile is on).
+          intelBusId = mkIf (!config.hardware-profiles.amdgpu.enable)
+            (mkDefault config.hardware-profiles.nvidia-prime.intelBusID);
+          # AMD+NVIDIA hybrid, e.g. Ryzen APU + RTX dGPU (ignored otherwise).
+          amdgpuBusId = mkIf config.hardware-profiles.amdgpu.enable
+            (mkDefault config.hardware-profiles.nvidia-prime.amdgpuBusID);
           nvidiaBusId = mkDefault config.hardware-profiles.nvidia-prime.nvidiaBusID;
         };
         # Sync keeps the dGPU powered always — finegrained MUST stay off or
@@ -121,6 +127,7 @@ with lib;
     # ----------------------------------------------------------------------
     (mkIf config.hardware-profiles.intel.enable {
       services.xserver.videoDrivers = mkDefault [ "modesetting" ];
+      hardware.cpu.intel.updateMicrocode = mkDefault config.hardware.enableRedistributableFirmware;
       hardware.graphics = {
         enable = mkDefault true;
         extraPackages = with pkgs; [

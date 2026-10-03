@@ -109,9 +109,12 @@ Rules:
   `modules/desktop/hyprland.nix`, historically others). No sudo in agent
   shells — stage to `/tmp`, verify, hand the user the `sudo cp` line.
   Directory writability allows rename-swaps only in user-owned dirs.
-- **Flakes only see tracked files.** `git add` every new/moved file or
-  evaluation fails with "not tracked by Git" (staging is required; committing
-  is the human's call).
+- **Flakes only see indexed files.** A file must be tracked in HEAD or staged
+  in the index, or evaluation fails with "not tracked by Git" — this applies
+  to git-IGNORED files too (they are invisible, not merely uncommitted).
+  `git add` every new/moved file. `hardware-configuration.nix` is committed
+  once as an example and stays ignored afterwards, so per-machine regens never
+  commit — but a fresh clone has no copy at all until one is generated.
 - **Verify everything, every time:**
   `nix-instantiate --parse <file>` per touched file, then full
   `nix eval --no-warn-dirty '/etc/nixos#nixosConfigurations.nixos.config.system.build.toplevel.drvPath'`.

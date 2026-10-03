@@ -164,7 +164,8 @@ in
     # acpi -b = battery status; powertop = tunables; brightnessctl = backlight
     # keys (also used by hyprland.nix); fwupd = firmware CLI; pciutils =
     # lspci to find PRIME BusIDs (00:02.0 -> PCI:0:2:0, 01:00.0 -> PCI:1:0:0),
-    # then set hardware-profiles.nvidia-prime.intelBusID / nvidiaBusID.
+    # then set hardware-profiles.nvidia-prime.intelBusID / nvidiaBusID
+    # (AMD+NVIDIA hybrids: amdgpuBusID instead of intelBusID).
     environment.systemPackages = with pkgs; [
       acpi # `acpi -b` battery status
       powertop # `sudo powertop --auto-tune` tunables

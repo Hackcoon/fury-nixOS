@@ -51,6 +51,8 @@ in
     ./modules/hardware/realtek-eee.nix  # MACHINE-SPECIFIC — only for RTL8111 enp5s0, drop on laptop
     ./modules/hardware/razer.nix        # OPTIONAL+MACHINE-SPECIFIC — only if Razer mouse/kb, safe to drop
     ./modules/hardware/amdgpu.nix       # AMD discrete GPU (RDNA3); INERT until amd-gpu.enable=true — see AMD PC section below
+    ./modules/hardware/intel-gpu.nix     # Full Intel stack; INERT until intel-gpu.enable=true — see OTHER MACHINES below
+    ./modules/hardware/nouveau.nix       # Open-source NVIDIA; INERT until nouveau.enable=true — never with proprietary stack
     ./modules/hardware/hardware-profiles.nix # OPTIONAL — portable GPU/VM toggles incl. laptop PRIME (see LAPTOP section below), cheap but safe to drop for minimal
     ./modules/hardware/laptop.nix      # LAPTOP: TLP+powertop+upower+thermald+suspend-then-hibernate+touchpad+wifi-powersave (needs laptop.enable=true below)
     ./modules/hardware/power-modes.nix # LAPTOP: laptop.powerMode powersave/balanced/performance — TLP tables + 80% charge cap
@@ -182,6 +184,9 @@ in
   # hardware-profiles.nvidia-prime.enable = true;  # laptop hybrid (set BusIDs!) // enable on laptop + set the two lines below
   # hardware-profiles.nvidia-prime.intelBusID = "PCI:0:2:0";   # i7-10750H UHD iGPU — verify: lspci | grep VGA
   # hardware-profiles.nvidia-prime.nvidiaBusID = "PCI:1:0:0";  # GTX 1660 Ti Mobile (TU116) — verify: lspci | grep 3D
+  # AMD+NVIDIA hybrid instead (e.g. Ryzen APU + RTX): enable the amdgpu profile
+  # ALONGSIDE prime and set the AMD BusID (hex bus to decimal, e.g. c5:00.0 -> PCI:197:0:0).
+  # hardware-profiles.nvidia-prime.amdgpuBusID = "PCI:5:0:0";  # AMD iGPU — verify: lspci | grep VGA
   # hardware-profiles.intel.enable = true;          # Intel iGPU machine // enable ALONGSIDE nvidia-prime on the laptop (modesetting + VAAPI)
   # ----------------------------------------------------------------------
   #
@@ -230,6 +235,8 @@ in
   # ----------------------------------------------------------------------
   # hardware-profiles.vm-guest.enable = true;       # QEMU/KVM guest // only inside a VM
   # hardware-profiles.local-hw-clock.enable = true; # dual-boot w/ Windows // only if dual-booting Windows
+  # intel-gpu.enable = true;  # full Intel stack (Arc/discrete/iGPU) // future Intel box
+  # nouveau.enable = true;    # open-source NVIDIA // NEVER with nvidia.nix or PRIME enabled
   # ----------------------------------------------------------------------
 
   # ============================================================

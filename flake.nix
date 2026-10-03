@@ -251,6 +251,9 @@
       # ==========================================================
       # Most normal Intel and AMD desktop computers use this.
       # NVIDIA graphics cards do not change this value.
+      # ARM boxes (Raspberry Pi, Asahi) are NOT covered by flipping this:
+      # aarch64 needs its own nixosSystem entry (different kernel, bootloader,
+      # firmware) plus a fresh hardware-configuration.nix — not a module toggle.
       system = "x86_64-linux";
 
 

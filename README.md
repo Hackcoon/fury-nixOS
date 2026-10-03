@@ -13,8 +13,9 @@ Everything real lives in `modules/`. Comment style and rules:
 | Laptop | i7-10750H + GTX 1660 Ti Mobile (hybrid Optimus) | Commented blocks, fresh install |
 | AMD PC | Ryzen 7 7700 + RX 7800 XT (RDNA3) | Commented blocks, future build |
 
-`hardware-configuration.nix` is intentionally NOT in this repo (machine
-UUIDs, regenerate per install — see below).
+`hardware-configuration.nix` is tracked once as a working example (UUIDs and
+module lists are not secrets). Per-machine regens stay uncommitted (ignored
+after the first commit) — always regenerate on a new install, never copy.
 
 ## Install on a new machine
 
@@ -64,7 +65,7 @@ every edit — `sudo chown -R $(whoami):users /etc/nixos` (root keeps
 ```
 flake.nix               # inputs + nixosConfigurations.nixos
 configuration.nix       # imports + per-machine flips (annotated)
-hardware-configuration.nix  # generated locally, never committed
+hardware-configuration.nix  # generated per machine; repo copy is an example, regens stay local
 home.nix                # Home Manager user config
 modules/core/           # boot, nix, locale, network, dns, default-apps,
                         #   appimage, flatpak, fonts
