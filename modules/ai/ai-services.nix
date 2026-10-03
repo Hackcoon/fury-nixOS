@@ -19,6 +19,7 @@
   # deleting the two wantedBy lines + rebuild.
   systemd.services.ollama.wantedBy = lib.mkForce [];     # start: sudo systemctl start ollama
   systemd.services.open-webui.wantedBy = lib.mkForce []; # start: sudo systemctl start open-webui
+  systemd.services.hermes-agent.wantedBy = lib.mkForce []; # start: sudo systemctl start hermes-agent
   services.ollama = {
     enable = true;
     package = pkgs.ollama-cuda;
@@ -33,7 +34,10 @@
   };
   # ----------------------------------------------------------------------
 
-  # ── Hermes Agent: coding agent as a systemd service ──
+  # ── Hermes Agent: coding agent as a systemd service (manual start only) ──
+  # Autostart gated like ollama above (wantedBy emptied — NixOS manages unit
+  # enablement at activation, so `systemctl disable` can never work here).
+  # Start when needed, re-enable autostart by deleting the wantedBy line.
   # Default model MiniMax M3 via OpenRouter (provider default — no base_url
   # override needed, just the slug): 1M context, tuned for long-horizon
   # agentic/coding work, genuinely free, not a trial quota. Key comes from
