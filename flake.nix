@@ -12,25 +12,25 @@
   # ============================================================
   # Inputs are external projects that this flake depends on.
   #
-  # When you run:
+  # When run:
   #
   #     sudo nix flake lock
   #
   # Nix records the exact revision of every input in flake.lock.
-  # This makes your system reproducible and prevents a rebuild
+  # This makes the system reproducible and prevents a rebuild
   # from silently changing because a GitHub branch moved.
   inputs = {
     # ----------------------------------------------------------
     # Stable NixOS Package Source
     # ----------------------------------------------------------
-    # This is the main package collection for your entire system.
+    # This is the main package collection for the entire system.
     #
-    # Your installed system is NixOS 26.05, so this branch keeps
+    # The installed system is NixOS 26.05, so this branch keeps
     # the kernel, NVIDIA driver, Plasma, Wayland, PipeWire,
     # system services, and other core components aligned.
     #
-    # This is intentionally NOT nixos-unstable because you had
-    # NVIDIA driver compilation and compatibility concerns.
+    # This is intentionally NOT nixos-unstable due to NVIDIA driver
+    # compilation and compatibility concerns.
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
 
 
@@ -40,15 +40,15 @@
     # Lanzaboote provides the NixOS module needed to create and
     # install signed Secure Boot boot entries.
     #
-    # This does not create or move your Secure Boot keys.
-    # Your existing keys remain at:
+    # This does not create or move Secure Boot keys.
+    # Existing keys remain at:
     #
     #     /etc/secureboot
     #
     lanzaboote.url = "github:nix-community/lanzaboote";
 
     # Tell Lanzaboote to use the same stable nixpkgs input as
-    # the rest of your system instead of creating a separate
+    # the rest of the system instead of creating a separate
     # nixpkgs revision inside the Lanzaboote dependency tree.
     lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -58,12 +58,12 @@
     # ----------------------------------------------------------
     # This provides access to newer individual applications.
     #
-    # It does NOT make the rest of your system unstable.
-    # You must explicitly use unstablePkgs.some-package in
-    # configuration.nix to select something from this input.
+    # It does NOT make the rest of the system unstable.
+    # Select unstable explicitly via unstablePkgs.some-package in
+    # configuration.nix.
     #
-    # Keep your NVIDIA driver, kernel, desktop stack, PipeWire,
-    # and other core components on the stable pkgs collection.
+    # The NVIDIA driver, kernel, desktop stack, PipeWire,
+    # and other core components stay on the stable pkgs collection.
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     # ----------------------------------------------------------
@@ -74,19 +74,19 @@
     #
     # Quickshell isn't in stable nixpkgs yet, so instead of letting
     # qylock pull in its own separate nixpkgs-unstable copy, point
-    # it at the nixpkgs-unstable input you already declare above.
+    # it at the nixpkgs-unstable input declared above.
     qylock.url = "github:Darkkal44/qylock";
     qylock.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
     # ----------------------------------------------------------
     # Dank Material Shell 1.6 (dms)
     # ----------------------------------------------------------
-    # Upstream flake — pinned to the v1.6.0 tag. nixpkgs only has
+    # Upstream flake — pinned to the v1.6.2 tag. nixpkgs only has
     # 1.5.3 and this machine had 1.4.6. Provides the
     # programs.dank-material-shell NixOS module (replaces the old
     # programs.dms-shell option name from 1.4.x).
     dms = {
-      url = "github:AvengeMedia/DankMaterialShell/v1.6.0";
+      url = "github:AvengeMedia/DankMaterialShell/v1.6.2";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
@@ -131,14 +131,14 @@
     #
     # HOW TO UPDATE:
     #   1. Check https://github.com/jub0t/Concat/releases/latest
-    #      (e.g. v0.2.3).
-    #   2. Change ONLY the tag below: "github:jub0t/Concat/v0.2.2"
-    #      → "github:jub0t/Concat/v0.2.3".
+    #      (e.g. v0.2.4).
+    #   2. Change ONLY the tag below: "github:jub0t/Concat/v0.2.3"
+    #      → "github:jub0t/Concat/v0.2.4".
     #   3. Run: sudo nix flake update concat
     #      then: sudo nixos-rebuild build --flake /etc/nixos#nixos
     # No hash dance — the flake.lock pins the exact revision.
     concat = {
-      url = "github:jub0t/Concat/v0.2.2";
+      url = "github:jub0t/Concat/v0.2.4";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
@@ -149,6 +149,29 @@
     # optional container environment for Hermes Agent.
     hermes-agent.url = "github:NousResearch/hermes-agent";
     hermes-agent.inputs.nixpkgs.follows = "nixpkgs";
+
+
+
+    # ----------------------------------------------------------
+    # ComfyUI image/video generation (FLAKE module + packages)
+    # ----------------------------------------------------------
+    # This input is a FLAKE: github:utensils/comfyui-nix.
+    # It provides:
+    #   - comfyui-nix.nixosModules.default  -> `services.comfyui.*` options
+    #     (wired in outputs `modules = [...]` below; config lives in
+    #     ./modules/ai/comfyui.nix)
+    #   - packages cuda/rocm/xpu/default + overlay `comfy-ui*`
+    #   - binary cache comfyui.cachix.org (see modules/core/nix.nix)
+    #
+    # Do NOT add `inputs.nixpkgs.follows = "nixpkgs"` here: this flake
+    # needs its pinned nixos-unstable for pre-built PyTorch CUDA wheels
+    # (Turing through Blackwell, driver >= 580). Following stable would
+    # break the CUDA closure on this NixOS 26.05 system.
+    #
+    # HOW TO UPDATE:
+    #   sudo nix flake update comfyui-nix
+    #   sudo nixos-rebuild switch --flake /etc/nixos#nixos
+    comfyui-nix.url = "github:utensils/comfyui-nix";
 
 
 
@@ -210,6 +233,10 @@
       # Hermes Agent NixOS/Home Manager module.
       hermes-agent,
 
+      # ComfyUI image/video generation FLAKE (utensils/comfyui-nix).
+      # Exposes comfyui-nix.nixosModules.default + packages/overlays.
+      comfyui-nix,
+
       # Home Manager — user-level (dotfile) configuration.
       home-manager,
 
@@ -239,8 +266,8 @@
       unstablePkgs = import nixpkgs-unstable {
         inherit system;
 
-        # Allow unfree packages from unstable only when you
-        # explicitly select them with unstablePkgs.some-package.
+        # Allow unfree packages from unstable only when explicitly
+        # selected via unstablePkgs.some-package.
         config.allowUnfree = true;
       };
 
@@ -266,10 +293,10 @@
       # ==========================================================
       # NIXOS SYSTEM CONFIGURATION
       # ==========================================================
-      # "nixos" is the name of your machine's configuration.
+      # "nixos" is the name of the machine's configuration.
       #
-      # This uses nixpkgs, which is your stable NixOS 26.05
-      # input. Therefore the normal "pkgs" used by your system
+      # This uses nixpkgs, which is the stable NixOS 26.05
+      # input. Therefore the normal "pkgs" used by the system
       # comes from stable nixpkgs.
       nixosConfigurations.nixos =
         nixpkgs.lib.nixosSystem {
@@ -288,7 +315,7 @@
           #
           # { config, pkgs, lib, unstablePkgs, ... }:
           #
-          # You can then use:
+          # Usage:
           #
           #   pkgs.some-package
           #
@@ -306,11 +333,11 @@
           # NixOS Modules
           # --------------------------------------------------------
           # These are the configuration files and external modules
-          # used to build your system.
+          # used to build the system.
           modules = [
-            # Your main NixOS configuration.
+            # The main NixOS configuration.
             #
-            # This contains your bootloader, Secure Boot settings,
+            # This contains the bootloader, Secure Boot settings,
             # NVIDIA driver, desktop, portals, PipeWire, users,
             # applications, networking, and services.
             ./configuration.nix
@@ -346,8 +373,8 @@
             # documents, MCP servers, container mode, etc).
             #
             # Adding this line only makes the OPTIONS available.
-            # Nothing runs until you also add something like the
-            # following to configuration.nix:
+            # Nothing runs until something like the following is also added
+            # to configuration.nix:
             #
             #   services.hermes-agent = {
             #     enable = true;
@@ -366,12 +393,21 @@
             # IMPORTANT — deployment mode: by default this runs as
             # a hardened systemd service directly on the host,
             # where the agent can only use tools already on its
-            # Nix-provided PATH. If you want the agent to be able
-            # to self-install packages at runtime (apt/pip/npm),
+            # Nix-provided PATH. For an agent able to self-install
+            # packages at runtime (apt/pip/npm),
             # set `container.enable = true`, which runs it inside
             # a persistent Ubuntu container instead (needs Docker
             # or Podman).
             hermes-agent.nixosModules.default
+
+            # ComfyUI service module — from the comfyui-nix FLAKE input above.
+            # This only makes the `services.comfyui.*` OPTIONS available;
+            # the actual values (cuda, port, dataDir, ...) are set in
+            # ./modules/ai/comfyui.nix (imported via configuration.nix).
+            # The flake module brings its own packages, so no
+            # `nixpkgs.overlays = [ comfyui-nix.overlays.default ]` is needed
+            # for the service itself.
+            comfyui-nix.nixosModules.default
 
             # --------------------------------------------------------
             # Home Manager (NixOS-integration mode)
@@ -410,7 +446,7 @@
       # ==========================================================
       # FUTURE OUTPUTS
       # ==========================================================
-      # You do not need to add anything here right now.
+      # Nothing needs adding here right now.
       #
       # Future examples could include:
       #
@@ -419,7 +455,6 @@
       # - devShells for development environments
       # - formatter for automatic Nix formatting
       #
-      # Keep the flake simple until you actually need one of
-      # those features.
+      # Keep the flake simple until one of those features is needed.
     };
 }

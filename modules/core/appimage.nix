@@ -1,10 +1,11 @@
-# AppImage support via binfmt_misc.
+# ============================================================================
+# appimage.nix — AppImage support via binfmt_misc.
 #
-# USAGE:
+# HOW TO USE (kept in this header so the workflow is one glance away):
 #   Run (one-off):  chmod +x ./SomeApp.AppImage && ./SomeApp.AppImage
 #   Without binfmt: nix-shell -p appimage-run --run "appimage-run ./SomeApp.AppImage"
 #   "Install":      gearlever (in nixpkgs) manages AppImages + desktop
-#                  entries, like AppImageLauncher on other distros.
+#                   entries, like AppImageLauncher on other distros.
 #
 # PACKAGING an AppImage properly (best for constant use):
 #   1. Determine the type: `file ./SomeApp.AppImage`
@@ -35,14 +36,14 @@
 #   4. Build once with the empty hash to learn the real one, paste it
 #      in, rebuild for real. From here it's a normal package: launcher
 #      entry, icon, updates on version bump, correct GC behavior.
-#
-# IF AN APPIMAGE FAILS TO LAUNCH with "error while loading shared
-# libraries: libXXX.so.XX: cannot open shared object file", uncomment
-# ONLY what the error names in the override below — some (torch) are
-# multi-GB; don't add speculatively.
+# ============================================================================
 { config, pkgs, lib, ... }:
 
 {
+  # ── binfmt AppImage runner (+ parked missing-lib override) ──
+  # binfmt = double-click any AppImage and it just runs. IF one fails with
+  # "error while loading shared libraries: libXXX.so.XX", uncomment ONLY what
+  # the error names below — some entries (torch) are multi-GB, never speculative.
   programs.appimage = {
     enable = true;
     binfmt = true;
@@ -56,4 +57,5 @@
     #   ];
     # };
   };
+  # ----------------------------------------------------------------------
 }

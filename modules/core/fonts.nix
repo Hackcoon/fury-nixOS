@@ -1,17 +1,25 @@
-# System-wide fonts + fontconfig defaults.
+# ============================================================================
+# fonts.nix — System-wide fonts + fontconfig defaults (CORE: every machine
+# needs these — bars, terminals, and editors break without the default face).
 #
-# Font set = union of LinuxBeginnings + JaKooLit NixOS font modules,
-# so any config you copy from either project renders exactly the same.
 # JetBrains Mono Nerd Font stays THE default (fury-bar, kitty, waybar).
+# TRIM note for minimal: cut the shared set / language coverage to shrink
+# the closure — keep the DEFAULT + fontconfig blocks so bars fall back cleanly.
+# ============================================================================
 { config, pkgs, lib, ... }:
 
 {
   fonts = {
+    # ── Packages: every font on the system ──
+    # One list, three groups: the DEFAULT terminal font first (what bars and
+    # terminals actually use), then the shared UI/mono set, then language +
+    # symbol coverage so nothing renders as tofu boxes.
+    # ----------------------------------------------------------------------
     packages = with pkgs; [
       # ── DEFAULT (keep first — what fury-bar/kitty/waybar use) ──
       nerd-fonts.jetbrains-mono   # JetBrains Mono NF (icons for eza, bat, ...)
 
-      # ── LinuxBeginnings / JaKooLit shared set ──
+      # ── Shared UI/mono set ──
       dejavu_fonts
       fira
       fira-go
@@ -52,14 +60,20 @@
       # ── Language / symbol coverage (was already here — kept) ──
       noto-fonts                  # Multilingual (Arabic, Cyrillic, ...)
       noto-fonts-cjk-sans         # Chinese/Japanese/Korean
-      noto-fonts-cjk-serif        # CJK serif (JaKooLit set)
+      noto-fonts-cjk-serif        # CJK serif
       noto-fonts-monochrome-emoji # monochrome emoji fallback
       noto-fonts-color-emoji      # Emoji
       symbola                     # Full Unicode symbols (squared/enclosed letters)
       freefont_ttf                # GNU FreeFont (math bold script)
       stix-two                    # Math & script coverage
     ];
+    # ----------------------------------------------------------------------
 
+    # ── fontconfig: which font wins per category ──
+    # Fallback order matters: first entry is the pick, rest cover scripts
+    # the pick lacks (Arabic, math, symbols). Emoji forced to color Noto so
+    # monochrome builds don't silently win.
+    # ----------------------------------------------------------------------
     fontconfig = {
       enable = true;
       defaultFonts = {
@@ -69,5 +83,6 @@
         emoji     = [ "Noto Color Emoji" ];
       };
     };
+    # ----------------------------------------------------------------------
   };
 }

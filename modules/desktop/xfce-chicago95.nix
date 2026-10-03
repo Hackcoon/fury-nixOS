@@ -1,20 +1,21 @@
-# XFCE session (Chicago95 theme target).
+# ============================================================================
+# xfce-chicago95.nix — XFCE session (Chicago95 Win95 target), pick per-login.
 #
-# Registers "Xfce Session" in SDDM next to Plasma — pick per-login.
-# The most trouble-free pairing with the NVIDIA driver (no Wayland
-# quirks): the X11-fix wrappers in packages/apps-fixed.nix (sioyek,
-# upscayl, vesktop) run natively here, no env hacks needed. The
-# module auto-enables polkit-gnome agent, NM tray applet, pulseaudio
-# plugin + pavucontrol, screensaver + PAM, udisks2/gvfs/tumbler,
-# gtk + xapp portals.
+# Registers "Xfce Session" in the greeter next to Plasma. Most trouble-free
+# NVIDIA pairing (no Wayland quirks): the X11-fix wrappers in
+# packages/apps-fixed.nix (sioyek, upscayl, vesktop) run natively here, no env
+# hacks. The module auto-enables polkit-gnome agent, NM tray applet, pulseaudio
+# plugin + pavucontrol, screensaver + PAM, udisks2/gvfs/tumbler, gtk + xapp
+# portals. OPTIONAL (3rd DE): drop for minimal.
+# ============================================================================
 { config, pkgs, lib, ... }:
 
 {
+  # ── XFCE session + bitmap fonts for Chicago95 ──
+  # allowBitmaps = Chicago95's pixelated "Helvetica" (cronyx-cyrillic).
+  # Declarative equivalent of upstream's "mv /etc/fonts/conf.d/70-no-bitmaps.
+  # conf" step. Harmless for Plasma: only ALLOWS bitmaps, never changes a default.
   services.xserver.desktopManager.xfce.enable = true;
-
-  # Allow bitmap fonts — needed for Chicago95's pixelated "Helvetica"
-  # (cronyx-cyrillic). Declarative equivalent of upstream's
-  # "mv /etc/fonts/conf.d/70-no-bitmaps.conf" step. Harmless for
-  # Plasma: it only ALLOWS bitmap fonts, never changes a default.
   fonts.fontconfig.allowBitmaps = true;
+  # ----------------------------------------------------------------------
 }

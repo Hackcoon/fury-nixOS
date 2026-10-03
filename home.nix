@@ -28,7 +28,7 @@
 #   - vscodium settings.json (app rewrites it at runtime)
 #   - okular's okularpartrc (app rewrites it on exit)
 #   - app data dirs (obsidian/anytype/opencode own their state)
-#   - secrets of any kind (see modules/programs/ai-services.nix
+#   - secrets of any kind (see modules/ai/ai-services.nix
 #     header for the sops-nix/agenix pattern)
 #
 # FLAKE INPUT MODULES: dsearch (danksearch) + zen-browser are passed
@@ -42,14 +42,14 @@
   # Matches system.stateVersion — do not change.
   home.stateVersion = "26.05";
 
-  # Let HM manage itself inside your user profile.
+  # HM manages itself inside the user profile.
   programs.home-manager.enable = true;
 
   # ----------------------------------------------------------------
   # Editor (vscodium)
   # ----------------------------------------------------------------
   # --wait: CLI integrations (git commit, sudoedit, gh) block until
-  # you close the editor window, instead of committing immediately.
+  # the editor window closes, instead of committing immediately.
   home.sessionVariables = {
     EDITOR = "codium --wait";
     VISUAL = "codium --wait";
@@ -119,7 +119,7 @@
     themeFile = "Catppuccin-Mocha";
 
     settings = {
-      background = "#000000";          # pure black (your requirement)
+      background = "#000000";          # pure black (required)
       scrollback_lines = 100000;        # generous history
       confirm_os_window_close = 0;      # don't nag on close
       enable_audio_bell = false;        # no beeps
@@ -135,7 +135,7 @@
   # btop (imported as-is from the previous hand-managed btop.conf)
   # ----------------------------------------------------------------
   # Every non-default value from ~/.config/btop/btop.conf on
-  # 2026-09-06. Your custom ~/.config/btop/themes/ directory is NOT
+  # 2026-09-06. The custom ~/.config/btop/themes/ directory is NOT
   # managed by HM and stays untouched. btop normally rewrites its
   # conf on exit (save_config_on_exit) — under HM the file is a
   # read-only store symlink, so runtime tweaks live in memory for
@@ -307,7 +307,7 @@
         "privacy.clearOnShutdown.history" = false;
       };
 
-      # DMS THEME — live @import of your generated zen.css (amoledBlack
+      # DMS THEME — live @import of the generated zen.css (amoledBlack
       # /red theme, refreshed by DMS on wallpaper/theme switch, no rebuild
       # needed). NOTE: builtins.readFile can't be used here — flake eval
       # is pure and forbids reads outside the store.

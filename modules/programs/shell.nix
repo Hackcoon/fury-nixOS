@@ -1,25 +1,35 @@
-# Zsh + Oh My Zsh + aliases + direnv. The whole terminal experience.
+# ============================================================================
+# shell.nix — Zsh + Oh My Zsh + aliases + direnv. The whole terminal experience.
+#
+# KEEP MINIMAL: this is the login shell — never drop. Aliases are grouped by
+# job inside shellAliases (everyday, browsers, QoL, rebuilds, flake updates,
+# rollback, store cleanup, git, system info); group labels stay as landmarks.
+# Rebuild aliases come in classic/nh pairs — the nh ones need programs.nh
+# (core/nix.nix). nix-track matters: flakes can't see untracked files, so run
+# it after adding files and before any rebuild.
+# ============================================================================
 { config, pkgs, lib, ... }:
 
 {
+  # ── Zsh core: completions, history, highlighting ──
+  # enableCompletion links /share/zsh into fpath (+ nix-zsh-completions) —
+  # false breaks completions. GlobalCompInit off: Oh My Zsh runs its own
+  # compinit, NixOS's duplicate call only. histSize is flat (NOT history={}):
+  # sets both HISTSIZE and SAVEHIST (~/.zsh_history is already the default).
   programs.zsh = {
     enable = true;
 
-    # Links /share/zsh (all package completions) into fpath and
-    # installs nix-zsh-completions. Setting false breaks completions.
     enableCompletion = true;
-
-    # Removes ONLY the duplicate compinit call from /etc/zshrc —
-    # Oh My Zsh runs its own compinit anyway.
     enableGlobalCompInit = false;
 
-    # Flat option (NOT history = { ... }) — sets both HISTSIZE and
-    # SAVEHIST. histFile already defaults to ~/.zsh_history.
     histSize = 10000;
 
     autosuggestions.enable = true;      # gray suggestions from history
     syntaxHighlighting.enable = true;   # red invalid, green valid
 
+    # ── Oh My Zsh: theme + plugins ──
+    # Custom (non-bundled) themes like powerlevel10k go in the parked block
+    # below INSTEAD of theme = — comment `theme` out if used.
     ohMyZsh = {
       enable = true;
       theme = "af-magic";
@@ -30,8 +40,6 @@
       ];
     };
 
-    # Custom (non-bundled) themes like powerlevel10k go here instead
-    # of theme = "...". Remember to comment out `theme` above:
     # ohMyZsh.plugins = [
     #   {
     #     name = "powerlevel10k";
@@ -39,7 +47,9 @@
     #     file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
     #   }
     # ];
+  # ----------------------------------------------------------------------
 
+    # ── Aliases: grouped by job ──
     shellAliases = {
       # ---------- Everyday commands ----------
       ls   = "eza --icons";                 # modern ls with icons
@@ -128,6 +138,7 @@
       nh-test = "nh os test /etc/nixos";  # test via nh helper
       nh-upgrade = "nh os switch /etc/nixos --update";  # update inputs + switch (like nix-upgrade)
       nh-up-input = "nh os switch /etc/nixos --update-input";  # + input name, e.g. nh-up-input nixpkgs
+      nh-up-unstable = "nh os switch /etc/nixos --update-input nixpkgs-unstable";  # update only unstable input + switch
       nh-boot = "nh os boot /etc/nixos";  # stage for next boot via nh
       nh-build = "nh os build /etc/nixos";  # build only, don't activate
       nh-info = "nh os info";             # list system generations
@@ -150,7 +161,7 @@
       # Check whether the flake structure and outputs are valid.
       # No nh equivalent.
       nix-check = "sudo nix flake check /etc/nixos";
-      # Show the exact versions of your flake inputs.
+      # Show the exact versions of the flake inputs.
       # No nh equivalent.
       nix-inputs = "nix flake metadata /etc/nixos";
 
@@ -179,8 +190,8 @@
       # Shorter alias for the same normal garbage collection.
       # nh equivalent: nh-clean
       nix-gc = "sudo nix-collect-garbage --delete-older-than 30d";
-      # WARNING: removes ALL old generations — only when you're certain
-      # you no longer need any rollback.
+      # WARNING: removes ALL old generations — only when no rollback
+      # is needed anymore.
       # nh equivalent: nh-clean
       nix-delete-all-old = "sudo nix-collect-garbage --delete-old";
       # Show how much space the Nix store is using.
@@ -196,11 +207,11 @@
       nix-format = "sudo nixfmt /etc/nixos/configuration.nix /etc/nixos/flake.nix";
 
       # ---------- Configuration Git commands ----------
-      # Review changes to your configuration.
+      # Review changes to the configuration.
       config-diff = "cd /etc/nixos && sudo git diff";
       # Show changed and untracked files.
       config-status = "cd /etc/nixos && sudo git status";
-      # Show your ten most recent configuration commits.
+      # Show the ten most recent configuration commits.
       config-log = "cd /etc/nixos && sudo git log --oneline --decorate -10";
       # Save the current configuration in a Git commit (prompts for message).
       config-save = "cd /etc/nixos && sudo git add . && sudo git commit";
@@ -255,7 +266,10 @@
       sb-verify = "sbctl verify";
     };
 
-    # Initialize Zsh tools when an interactive shell opens.
+    # ── Shell init + direnv: tools on interactive shells ──
+    # zoxide (cd memory) + fzf (fuzzy history/files) init here; direnv below
+    # auto-loads per-project dev shells (pairs with --keep-one in nh clean,
+    # core/nix.nix, so GC doesn't eat active project envs).
     interactiveShellInit = ''
       eval "$(zoxide init zsh)"
       eval "$(fzf --zsh)"
@@ -267,4 +281,5 @@
     enable = true;
     nix-direnv.enable = true;
   };
+  # ----------------------------------------------------------------------
 }
