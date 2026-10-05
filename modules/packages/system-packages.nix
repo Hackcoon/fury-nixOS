@@ -165,6 +165,7 @@
     prismlauncher           # Minecraft launcher
     heroic                  # GOG / Epic / Amazon Games launcher
     bottles                 # Wine prefix manager
+    lutris                  # game launcher (Battle.net and friends via Wine)
 
     # Gaming performance and diagnostics
     mangohud
