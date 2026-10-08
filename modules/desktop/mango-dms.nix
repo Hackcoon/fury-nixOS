@@ -12,30 +12,21 @@
 { config, pkgs, lib, unstablePkgs, ... }:
 
 {
-  # ── 1) MANGOWC: the compositor (unstable + 0.17.3 override) ──
+  # ── 1) MANGOWC: the compositor (unstable, currently 0.17.5) ──
   # DMS 1.6's mango integration (bar workspaces/tags, layout awareness,
   # Settings → Compositor) talks to the MANGO_INSTANCE_SIGNATURE IPC socket,
   # which mango only gained in 0.14.0. Stable nixpkgs (26.05) ships 0.12.8 —
-  # too old (dankbar shows NO workspaces). nixos-unstable has 0.16.3, and
-  # 0.17.3 (float_full_to_top, dim, hot-reload + keycode + Wemeet fixes) isn't
-  # in unstable yet (still 0.17.2 as of 2026-09-23), so build from upstream tag
-  # (same meson deps wlroots-0.20/scenefx-0.5, only version+src overridden).
-  # TODO: drop overrideAttrs once `unstablePkgs.mangowc.version == "0.17.3"`,
-  # then revert to plain `package = unstablePkgs.mangowc;`.
+  # too old (dankbar shows NO workspaces).
+  # 2026-10-08: nixos-unstable now ships 0.17.5 (= upstream latest V0.17.5),
+  # so the old 0.17.3 overrideAttrs is dropped — plain unstable package.
+  # HOW TO UPDATE MANGO IN FUTURE: check https://github.com/mangowm/mango/releases/latest,
+  # then `sudo nix flake update nixpkgs-unstable`. If unstable lags upstream,
+  # re-add overrideAttrs with new tag+hash (nix will tell you the hash on build).
   # Breaking changes checked 2026-09-15: config has no tablet_map_to_mon /
   # touch_map_to_mon (use devicerule if needed).
   programs.mangowc = {
     enable = true;
-    package = unstablePkgs.mangowc.overrideAttrs (old: {
-      version = "0.17.3";
-      src = unstablePkgs.fetchFromGitHub {
-        owner = "mangowm";
-        repo = "mango";
-        tag = "0.17.3";
-        hash = "sha256-o7azS0ibaWG4MGGZ+JZDsJe4JpCoPX78lTRuH+jioU4=";
-      };
-    });
-    # package = unstablePkgs.mangowc;   # 0.16.3 — new IPC, DMS-compatible
+    package = unstablePkgs.mangowc;   # 0.17.5 — new IPC, DMS-compatible
     # package = pkgs.mangowc;        # stable 0.12.8 — no DMS bar support
   };
   # ----------------------------------------------------------------------

@@ -110,12 +110,14 @@
     # ----------------------------------------------------------
     # Dank Material Shell 1.6 (dms)
     # ----------------------------------------------------------
-    # Upstream flake — pinned to the v1.6.2 tag. nixpkgs only has
-    # 1.5.3 and this machine had 1.4.6. Provides the
-    # programs.dank-material-shell NixOS module (replaces the old
-    # programs.dms-shell option name from 1.4.x).
+    # Upstream flake — pinned to the v1.6.3 tag (latest 2026-10-07,
+    # was v1.6.2). nixpkgs only has 1.5.3 and this machine had 1.4.6.
+    # Provides the programs.dank-material-shell NixOS module (replaces
+    # the old programs.dms-shell option name from 1.4.x).
+    # HOW TO UPDATE: check https://github.com/AvengeMedia/DankMaterialShell/releases/latest,
+    # change ONLY the tag below, then `sudo nix flake update dms`.
     dms = {
-      url = "github:AvengeMedia/DankMaterialShell/v1.6.2";
+      url = "github:AvengeMedia/DankMaterialShell/v1.6.3";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
@@ -160,14 +162,16 @@
     #
     # HOW TO UPDATE:
     #   1. Check https://github.com/jub0t/Concat/releases/latest
-    #      (e.g. v0.2.4).
-    #   2. Change ONLY the tag below: "github:jub0t/Concat/v0.2.3"
-    #      → "github:jub0t/Concat/v0.2.4".
+    #      (e.g. v0.2.6, was v0.2.4).
+    #   2. Change ONLY the tag below: "github:jub0t/Concat/v0.2.4"
+    #      → "github:jub0t/Concat/v0.2.6".
     #   3. Run: sudo nix flake update concat
     #      then: sudo nixos-rebuild build --flake /etc/nixos#nixos
     # No hash dance — the flake.lock pins the exact revision.
+    # NOTE (2026-10-08): kept DISABLED in configuration.nix (HEAVY Rust
+    # build). Tag bumped anyway so re-enable is one uncomment.
     concat = {
-      url = "github:jub0t/Concat/v0.2.4";
+      url = "github:jub0t/Concat/v0.2.6";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
