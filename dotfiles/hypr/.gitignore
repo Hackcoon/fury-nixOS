@@ -1,0 +1,8 @@
+# fury-hyprland — local junk, never commit
+screenshots/
+.dms-backups/
+*.log
+*.bak
+*.pre-dms-*
+*.backup[0-9]*
+wallpaper_effects/
