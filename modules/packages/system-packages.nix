@@ -1,6 +1,11 @@
 # System-wide packages. Wrapped/patched apps live in apps-fixed.nix.
 # Unstable packages use unstablePkgs (from flake.nix specialArgs).
-{ config, pkgs, lib, unstablePkgs, ... }:
+# Per-package downgrades use unstableOldPkgs (pinned snapshot, see flake.nix
+# "Pinned Unstable Snapshot"). FUTURE RECIPE for any software:
+#   1. `sudo nix flake update nixpkgs-unstable` breaks `unstablePkgs.foo`
+#   2. Change that one line to `unstableOldPkgs.foo`, rebuild, done
+#   3. When upstream fixes it, switch back to `unstablePkgs.foo`
+{ config, pkgs, lib, unstablePkgs, unstableOldPkgs, ... }:
 
 {
   environment.systemPackages = with pkgs; [
@@ -230,7 +235,12 @@
     unstablePkgs.opencode-desktop  # AI coding agent desktop client (unstable)
     unstablePkgs.lmstudio-bionic  # LM Studio Bionic — agent for open models
     unstablePkgs.pi-coding-agent  # Coding agent CLI with read, bash, edit, write tools and session management
-    unstablePkgs.t3code           # theo t3 code
+    # t3code PINNED to 0.0.42 (2026-10-08): 0.0.44 from latest unstable is
+    # broken (node-pty prebuilt missing libstdc++.so.6 -> backend code=1,
+    # Electron runs but no Hyprland window). Uses unstableOldPkgs snapshot
+    # e158d9ed (see flake.nix). TO REVERT TO LATEST: change back to
+    # `unstablePkgs.t3code` and rebuild. TO PIN ANOTHER APP: copy this pattern.
+    unstableOldPkgs.t3code        # theo t3 code (pinned, see above)
   ];
 
   # Syncthing as a user service (run at login, auto-restart) — enable

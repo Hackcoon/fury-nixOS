@@ -4,10 +4,12 @@
 # The flake (flake.nix) points nixosSystem at this file; this file
 # only wires the module tree together and pins stateVersion.
 #
-# unstablePkgs comes from flake.nix specialArgs — modules that need
-# it declare it in their argument set.
+# unstablePkgs + unstableOldPkgs come from flake.nix specialArgs —
+# modules that need them declare them in their argument set.
+# unstableOldPkgs = pinned snapshot for per-package downgrades
+# (see flake.nix "Pinned Unstable Snapshot", e.g. t3code 0.0.42).
 
-{ config, pkgs, lib, unstablePkgs, concatPkg, ... }:
+{ config, pkgs, lib, unstablePkgs, unstableOldPkgs, concatPkg, ... }:
 
 # ============================================================
 # Custom packages
@@ -127,7 +129,7 @@ in
     # coding-agent memory CLI (OpenWolf npm tarball, node-wrapped — see pkgs/openwolf.nix header for updates)
     openwolf # OPTIONAL — drop for minimal
     # CapCut replacement, native Rust build from upstream flake (bump tag in flake.nix to update)
-    concatPkg # HEAVY — Rust build from source, drop for minimal/fastest build
+    # concatPkg # HEAVY — Rust build from source, drop for minimal/fastest build
   ];
   # ============================================================
   # DNS — flip per network, then rebuild

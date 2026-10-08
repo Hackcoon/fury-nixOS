@@ -67,6 +67,35 @@
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     # ----------------------------------------------------------
+    # Pinned Unstable Snapshot (per-package downgrades)
+    # ----------------------------------------------------------
+    # HOW TO DOWNGRADE ANY SINGLE UNSTABLE PACKAGE IN THE FUTURE:
+    #
+    # 1. Find the last good nixpkgs-unstable commit. If you just ran
+    #    `sudo nix flake update nixpkgs-unstable` and something broke:
+    #      git -C /etc/nixos diff -- flake.lock   # shows new rev
+    #      git -C /etc/nixos show HEAD:flake.lock | grep -A3 nixpkgs-unstable
+    #    The OLD rev in HEAD is your last-good commit.
+    #    Or pick any commit from https://github.com/NixOS/nixpkgs/commits/nixos-unstable
+    #    (use the full 40-char hash, not a branch name, so it never moves).
+    #
+    # 2. Point the input below at that hash, e.g.:
+    #      nixpkgs-unstable-pinned.url = "github:NixOS/nixpkgs/<OLD-HASH>";
+    #
+    # 3. In `outputs` let-block, it is already imported as `unstableOldPkgs`
+    #    (see below). Use it in `modules/packages/system-packages.nix`:
+    #      unstableOldPkgs.foo   # instead of unstablePkgs.foo
+    #
+    # 4. Rebuild: `sudo nixos-rebuild switch --flake /etc/nixos#nixos`
+    #    When upstream fixes the package, switch back to `unstablePkgs.foo`
+    #    and optionally delete this pinned input.
+    #
+    # CURRENT PIN (2026-10-08): t3code 0.0.44 is broken upstream
+    # (node-pty prebuilt missing libstdc++.so.6 -> backend exits code=1,
+    # no window in Hyprland). This rev = pre-update HEAD, has t3code 0.0.42.
+    nixpkgs-unstable-t3-old.url = "github:NixOS/nixpkgs/e158d9ed9b51c98974c5e66e1ba1c9e0255fecaa";
+
+    # ----------------------------------------------------------
     # Qylock SDDM / Quickshell Lockscreen Themes
     # ----------------------------------------------------------
     # Provides SDDM login-screen themes and a Quickshell-based
@@ -213,6 +242,9 @@
       # Optional unstable package collection.
       nixpkgs-unstable,
 
+      # Pinned old unstable for per-package downgrades (see inputs).
+      nixpkgs-unstable-t3-old,
+
       # Lanzaboote module.
       lanzaboote,
 
@@ -275,6 +307,18 @@
       };
 
       # ==========================================================
+      # PINNED OLD UNSTABLE (per-package downgrades)
+      # ==========================================================
+      # `unstableOldPkgs` = same shape as `unstablePkgs` but frozen at
+      # `nixpkgs-unstable-t3-old` input above. Use for ONE broken package
+      # at a time, e.g. `unstableOldPkgs.t3code`, while everything else
+      # stays on latest unstable. See input comment for future recipe.
+      unstableOldPkgs = import nixpkgs-unstable-t3-old {
+        inherit system;
+        config.allowUnfree = true;
+      };
+
+      # ==========================================================
       # ZEN BROWSER (beta, via zen-browser-flake input)
       # ==========================================================
       # `packages.${system}.default` tracks Zen beta.
@@ -327,8 +371,13 @@
           #   unstablePkgs.some-package
           #
           # for one intentionally selected unstable package.
+          #
+          # DOWNGRADE RECIPE (any software): if `unstablePkgs.foo` breaks
+          # after `nix flake update nixpkgs-unstable`, temporarily use
+          # `unstableOldPkgs.foo` in the module (it is pinned in inputs).
+          # Both collections are available here via specialArgs.
           specialArgs = {
-            inherit unstablePkgs zenBrowser concatPkg;
+            inherit unstablePkgs unstableOldPkgs zenBrowser concatPkg;
           };
 
 
