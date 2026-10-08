@@ -1,6 +1,6 @@
 # Git Guide — mango / dwm / hyprland / nixos configs (fury)
 
-> Last updated: 2026-09-13.
+> Last updated: 2026-10-08.
 > One repo per config folder. Uses the shell aliases in `/etc/nixos/modules/programs/shell.nix`
 > (rebuild + `exec zsh` — or `sz` — after changing them).
 
@@ -82,6 +82,18 @@ git add -A && git commit -m "hyprland initial snapshot"
 
 Then: edit → `hypr-save`. (Add a `.gitignore` first if the folder has logs/caches.)
 
+### Mirror in fury-nixOS (`dotfiles/hypr/`)
+
+`dotfiles/hypr/` is a static copy of the tracked files in `fury-hyprland-dms`
+(a plain directory, not a submodule, so it renders inline on GitHub).
+Re-sync after any Hyprland change — commit the hypr repo first, then:
+
+```sh
+git -C ~/.config/hypr archive HEAD | tar -x -C /etc/nixos/dotfiles/hypr
+cp ~/.config/hypr/hyprland-keys-final.md /etc/nixos/docs/hyprland-keys-final.md
+cd /etc/nixos && git add dotfiles/hypr docs/hyprland-keys-final.md && git commit -m "..." && git push
+```
+
 ## 5. Off-machine backup (recommended)
 
 No remotes exist yet (`git remote -v` is empty). At minimum for `/etc/nixos`:
@@ -102,4 +114,5 @@ see `AI-SYNC-BIBLE.md` for the backup side.
 
 ## Changelog
 
+- 2026-10-08: documented `dotfiles/hypr/` mirror re-sync (§4).
 - 2026-09-13: created (repos: nixos existing; mango/suckless/hypr init steps; 6 new aliases).
