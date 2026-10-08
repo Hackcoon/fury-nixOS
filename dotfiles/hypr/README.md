@@ -60,3 +60,15 @@ loading (check the `require` line).
 `SPACE` spotlight · `ALT+SPACE` vicinae · `V` clipboard · `N` notifs · `W` wallpaper · `O` control center ·
 `S` region→satty · `U` special · `J` scratch · `L` layout cycle (dwindle/master/scrolling) ·
 `Tab`/wheel hop used workspaces · `1..9` tags · `H` this sheet · `R` restart DMS.
+
+## Mirror in fury-nixOS (`dotfiles/hypr/`)
+
+This repo is mirrored as a plain directory at `/etc/nixos/dotfiles/hypr/`
+(not a submodule, so it renders inline on the fury-nixOS GitHub page).
+After pushing changes here, re-sync the mirror:
+
+```sh
+git -C ~/.config/hypr archive HEAD | tar -x -C /etc/nixos/dotfiles/hypr
+cp ~/.config/hypr/hyprland-keys-final.md /etc/nixos/docs/hyprland-keys-final.md
+cd /etc/nixos && git add dotfiles/hypr docs/hyprland-keys-final.md && git commit -m "..." && git push
+```
