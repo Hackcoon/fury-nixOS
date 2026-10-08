@@ -83,6 +83,9 @@ modules/packages/       # system-packages, brave-webgpu, brave-fast, apps-fixed
 modules/unused/        # retired modules (uncomment to revive)
 pkgs/                   # custom derivations (tolaria, recordly, openwolf)
 docs/                   # guides + module-style-guide.md
+dotfiles/               # config mirrors: mango/ = submodule (mango-config-dms);
+                        #   hypr/ = static copy of fury-hyprland-dms
+                        #   (re-sync after hypr changes: docs/GIT-GUIDE.md §4)
 ```
 
 Import tags in `configuration.nix`: `KEEP MINIMAL` (never drop),
