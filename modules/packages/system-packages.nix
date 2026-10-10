@@ -1,6 +1,11 @@
 # System-wide packages. Wrapped/patched apps live in apps-fixed.nix.
 # Unstable packages use unstablePkgs (from flake.nix specialArgs).
-{ config, pkgs, lib, unstablePkgs, ... }:
+# Per-package downgrades use unstableOldPkgs (pinned snapshot, see flake.nix
+# "Pinned Unstable Snapshot"). FUTURE RECIPE for any software:
+#   1. `sudo nix flake update nixpkgs-unstable` breaks `unstablePkgs.foo`
+#   2. Change that one line to `unstableOldPkgs.foo`, rebuild, done
+#   3. When upstream fixes it, switch back to `unstablePkgs.foo`
+{ config, pkgs, lib, unstablePkgs, unstableOldPkgs, ... }:
 
 {
   environment.systemPackages = with pkgs; [
@@ -30,6 +35,9 @@
     wl-clipboard            # wl-copy / wl-paste
     cliphist                # Clipboard history for Wayland
     flameshot               # Screenshot with annotation
+    grimblast               # Screenshot wrapper around grim/slurp
+    tesseract               # OCR engine (screenshot-to-text pipeline)
+    wtype                   # Wayland keystroke injector (Parakeet STT live-typing)
     qalculate-qt            # Multi-purpose desktop calculator
     hyprcursor              # New cursor theme format
     cmatrix                 # Matrix rain in terminal
@@ -86,6 +94,8 @@
     python3                 # Python runtime
     nodejs_22               # Node.js runtime
     python3Packages.pip     # Python package installer
+    uv                      # Fast Python package manager (STT/TTS model venvs)
+    python314               # Python 3.14 runtime (Parakeet requires >=3.14.6 GIL)
     lua                     # Lua interpreter
     luarocks                # Lua package manager
 
@@ -114,12 +124,13 @@
     (brave.override {
       commandLineArgs = "--password-store=gnome-libsecret";
     })
-    librewolf               # Privacy-focused Firefox fork
+    librewolf-bin           # Privacy-focused Firefox fork (BINARY — fast download; was: librewolf source build, hours to compile — revert: swap back to librewolf)
     qutebrowser             # Keyboard-driven browser (vim bindings, Super+K in mango)
-    stoat-desktop           # Open-source Discord alternative
     mailspring              # Email client
 
     # === FILE MANAGEMENT, SYNC & ARCHIVING ===
+    yazi                    # Terminal file manager (SUPER+Y in mango)
+    superfile               # Terminal file manager (SUPER+SHIFT+Y in mango)
     wget                    # File downloader
     curl                    # HTTP swiss army knife
     aria2                   # Multi-connection downloader
@@ -159,6 +170,7 @@
     prismlauncher           # Minecraft launcher
     heroic                  # GOG / Epic / Amazon Games launcher
     bottles                 # Wine prefix manager
+    lutris                  # game launcher (Battle.net and friends via Wine)
 
     # Gaming performance and diagnostics
     mangohud
@@ -177,10 +189,14 @@
     vlc                     # Versatile media player
     nomacs                  # Image viewer
     kdePackages.kdenlive    # Non-linear video editor
-    ffmpeg-full             # Record / convert / stream audio+video
+    ffmpeg                  # Record / convert / stream audio+video (was: ffmpeg-full — full codec set + CUDA rebuild, 20-40min — revert: swap back to ffmpeg-full)
     mediainfo               # Media file info CLI
     mediainfo-gui           # GUI for mediainfo
     easyeffects             # Audio effects for PipeWire apps
+    portaudio               # Audio I/O library (Parakeet mic via sounddevice)
+    espeak-ng               # Speech synthesizer backend (Kokoro phonemizer)
+    songrec                 # Shazam-like music recognition
+    alsa-utils              # ALSA test tools (arecord/aplay)
 
     # === KDE EXTRAS ===
     kdePackages.sddm-kcm    # Login screen manager
@@ -218,14 +234,28 @@
     unstablePkgs.opencode   # AI coding agent for the terminal (unstable = newer)
     unstablePkgs.opencode-desktop  # AI coding agent desktop client (unstable)
     unstablePkgs.lmstudio-bionic  # LM Studio Bionic — agent for open models
+    unstablePkgs.pi-coding-agent  # Coding agent CLI with read, bash, edit, write tools and session management
+    # t3code PINNED to 0.0.42 (2026-10-08): 0.0.44 from latest unstable is
+    # broken (node-pty prebuilt missing libstdc++.so.6 -> backend code=1,
+    # Electron runs but no Hyprland window). Uses unstableOldPkgs snapshot
+    # e158d9ed (see flake.nix). TO REVERT TO LATEST: change back to
+    # `unstablePkgs.t3code` and rebuild. TO PIN ANOTHER APP: copy this pattern.
+    unstableOldPkgs.t3code        # theo t3 code (pinned, see above)
   ];
 
   # Syncthing as a user service (run at login, auto-restart) — enable
-  # when you want background sync instead of launching it manually:
+  # when background sync instead of manual launching is wanted:
   # services.syncthing = {
   #   enable = true;
   #   user = "fury";
   #   openDefaultPorts = false;   # local-network syncing needs no ports
   # };
   # Check with: systemctl --user status syncthing
+
+  # Neovim terminal editor (provides vi/vim aliases).
+  # defaultEditor off while learning — micro stays the default.
+  programs.neovim = {
+    enable = true;
+    defaultEditor = false;
+  };
 }

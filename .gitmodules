@@ -1,0 +1,3 @@
+[submodule "dotfiles/mango"]
+	path = dotfiles/mango
+	url = https://github.com/Hackcoon/mango-config.git

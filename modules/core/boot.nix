@@ -1,36 +1,40 @@
-# Bootloader & kernel.
+# ============================================================================
+# boot.nix — Bootloader, Secure Boot, kernel.
 #
-# systemd-boot is disabled with mkForce because Lanzaboote (Secure Boot)
-# takes over the boot entries and force-disables it itself; being
-# explicit avoids "multiple defined" errors from leftover defaults.
+# Stack: Lanzaboote (Secure Boot) instead of plain systemd-boot, standard
+# 26.05 kernel, EFI writes allowed, PCIe ASPM off (RTL8111 stability),
+# boot menu capped so the ESP never fills up.
+# ============================================================================
 { config, pkgs, lib, ... }:
 
 {
-  # Standard kernel from your nixos-26.05 channel (pkgs.linuxPackages).
+  # ── Kernel: standard 26.05 build ──
   # Alternatives: pkgs.linuxPackages_latest, or an LTS pin.
   boot.kernelPackages = pkgs.linuxPackages;
+  # ----------------------------------------------------------------------
 
-  # Disable default systemd-boot in favor of Lanzaboote (Secure Boot)
+  # ── Secure Boot via Lanzaboote (sbctl keys in /etc/secureboot) ──
+  # systemd-boot is force-disabled because Lanzaboote takes over the boot
+  # entries and force-disables it itself; being explicit avoids
+  # "multiple defined" errors from leftover defaults.
   boot.loader.systemd-boot.enable = lib.mkForce false;
-
-  # Enable Lanzaboote and define the PKI bundle location
-  # (your sbctl keys live in /etc/secureboot)
   boot.lanzaboote = {
     enable = true;
     pkiBundle = "/etc/secureboot";
   };
+  boot.loader.efi.canTouchEfiVariables = true; # allow EFI variables to be modified
+  # ----------------------------------------------------------------------
 
-  # Allow EFI variables to be modified
-  boot.loader.efi.canTouchEfiVariables = true;
-
-  # PCIe ASPM can cause link renegotiation disconnects on RTL8111
-  # boards — same symptom family as the EEE bug handled by
-  # modules/hardware/realtek-eee.nix. Kept enabled while the EEE fix
-  # alone proves stable. Tradeoff: slightly higher idle power draw.
+  # ── PCIe ASPM off (RTL8111 stability) ──
+  # ASPM link renegotiation disconnects on RTL8111 boards — same symptom family
+  # as the EEE bug handled by modules/hardware/realtek-eee.nix. Kept off while
+  # the EEE fix alone proves stable. Tradeoff: slightly higher idle power draw.
   boot.kernelParams = [ "pcie_aspm=off" ];
+  # ----------------------------------------------------------------------
 
-  # Caps the boot menu to the last 20 generations so the ESP doesn't
-  # fill up with entries even if you rebuild a lot in a short window.
-  # Lanzaboote respects this even though systemd-boot.enable is off.
+  # ── Boot menu: keep the last 20 generations ──
+  # Stops the ESP filling up with entries after many rebuilds in a short
+  # window. Lanzaboote respects this even though systemd-boot.enable is off.
   boot.loader.systemd-boot.configurationLimit = 20;
+  # ----------------------------------------------------------------------
 }

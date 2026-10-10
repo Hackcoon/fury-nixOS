@@ -1,13 +1,19 @@
-# Audio (PipeWire) + Bluetooth (BlueZ) — one headset feature unit.
+# ============================================================================
+# audio.nix — Audio (PipeWire) + Bluetooth (BlueZ): one headset feature unit.
+#
+# PipeWire replaces PulseAudio entirely (ALSA + Pulse + JACK compat kept so
+# every app finds a server to talk to). BlueZ handles headsets, with SBC-XQ /
+# mSBC wideband enabled through wireplumber for better wireless sound + mic.
+# OPTIONAL for minimal: drop = no sound, but boots leaner.
+# ============================================================================
 { config, pkgs, lib, ... }:
 
 {
-  # Disable legacy PulseAudio in favor of PipeWire
+  # ── PipeWire replaces PulseAudio ──
+  # Legacy PulseAudio off, rtkit for realtime scheduling, full compat stack
+  # (ALSA incl. 32-bit for games, Pulse, JACK) under wireplumber.
   services.pulseaudio.enable = false;
-
-  # Realtime Kit scheduling for optimal audio performance
-  security.rtkit.enable = true;
-
+  security.rtkit.enable = true; # realtime scheduling for glitch-free audio
   services.pipewire = {
     enable = true;
     alsa.enable = true;
@@ -16,34 +22,32 @@
     jack.enable = true;       # JACK application support
     wireplumber.enable = true;
   };
+  # ----------------------------------------------------------------------
 
-  # BlueZ system-wide
+  # ── Bluetooth (BlueZ): radio on at boot, headset features ──
+  # Experimental = headset battery reporting. Codec tweaks go through
+  # wireplumber's BlueZ monitor below, not here.
   hardware.bluetooth = {
     enable = true;
-
-    # Turn Bluetooth on automatically at boot
-    powerOnBoot = true;
-
+    powerOnBoot = true; # radio on after boot
     settings = {
       General = {
         Experimental = true;   # e.g. reading headset battery levels
       };
     };
   };
+  # ----------------------------------------------------------------------
 
-  # Bluetooth audio codec tweaks, applied via the BlueZ monitor in
-  # wireplumber
+  # ── Bluetooth codec upgrades (SBC-XQ + mSBC wideband) ──
+  # SBC-XQ = higher-quality SBC; mSBC = wideband mic audio for calls.
+  # Hardware volume left OFF: letting the headset own volume sync breaks
+  # level reporting on some headphones — flip it on for headsets that handle it.
   services.pipewire.wireplumber.extraConfig."bluetooth-config" = {
     "monitor.bluez.properties" = {
-      # SBC-XQ: higher-quality variant of the standard SBC codec
       "bluez5.enable-sbc-xq" = true;
-
-      # mSBC: wideband speech codec for better headset mic audio
       "bluez5.enable-msbc" = true;
-
-      # Let the device control its own hardware volume — can cause
-      # volume-sync issues with some headphones, hence left off.
-      # "bluez5.enable-hw-volume" = true;
+      # "bluez5.enable-hw-volume" = true; # OFF: volume-sync issues on some headsets
     };
   };
+  # ----------------------------------------------------------------------
 }

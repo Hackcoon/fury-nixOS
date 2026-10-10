@@ -1,8 +1,16 @@
-# Virtualization: libvirtd/KVM + virt-manager + Spice USB + Podman.
+# ============================================================================
+# virtualisation.nix — libvirtd/KVM + virt-manager + Spice USB + Podman.
+#
+# HEAVY: QEMU/libvirt closure. Drop for minimal. fury is in libvirtd via
+# users.nix (virt-manager without "access denied"). Hermes container mode
+# (ai/ai-services.nix) needs the Podman half below.
+# ============================================================================
 { config, pkgs, lib, ... }:
 
 {
-  # libvirtd with settings tuned for KVM/QEMU VM performance
+  # ── KVM/QEMU hypervisor + GUI + USB passthrough ──
+  # qemu_kvm tuned build, TPM emulation for Windows 11 guests (swtpm),
+  # virt-manager GUI, Spice for USB redirection into VMs.
   virtualisation.libvirtd = {
     enable = true;
     qemu = {
@@ -11,19 +19,14 @@
       swtpm.enable = true;
     };
   };
-
-  # Virt-Manager GUI
   programs.virt-manager.enable = true;
+  virtualisation.spiceUSBRedirection.enable = true; # USB passthrough into VMs
+  # ----------------------------------------------------------------------
 
-  # Spice redirection for USB passthrough
-  virtualisation.spiceUSBRedirection.enable = true;
-
-  # Podman — daemonless container backend. Nothing runs until you
-  # actually start a container (zero idle CPU/memory).
-  #   dockerCompat    -> `docker` CLI shim pointing at podman
-  #   dockerSocket    -> docker-compatible API socket (socket-activated,
-  #                     starts on demand) so docker-API tools (winboat)
-  #                     work without a permanent daemon.
+  # ── Podman: daemonless containers, docker-compatible ──
+  # Nothing runs until a container starts (zero idle CPU/memory).
+  # dockerCompat = `docker` CLI shim -> podman; dockerSocket = on-demand API
+  # socket so docker-API tools (winboat) work without a permanent daemon.
   # Want the REAL Docker daemon instead? Drop this block and enable
   # virtualisation.docker.enable = true;
   virtualisation.podman = {
@@ -31,4 +34,5 @@
     dockerCompat = true;
     dockerSocket.enable = true;
   };
+  # ----------------------------------------------------------------------
 }
