@@ -82,6 +82,7 @@ in
     ./modules/programs/thunar.nix        # OPTIONAL — file manager, safe to drop
     ./modules/programs/firefox.nix       # OPTIONAL — 2nd browser, safe to drop if Brave/Zen cover it
     ./modules/programs/zen.nix           # OPTIONAL — currently empty/HM-managed, safe to drop import
+    ./modules/programs/fury-audio-studio.nix # Fury Audio Studio (PipeWire voice DSP) — enable below via services.fury-audio-studio.enable
 
     # ============================================================
     # AI — ALL HEAVY (CUDA/LLM), drop whole section for minimal
@@ -303,6 +304,17 @@ in
   # ai-stt.cuda = true;    # NVIDIA acceleration (1660 SUPER) // HEAVY: works on laptop 1660 Ti too, keep OFF for minimal
   ai-tts.enable = true;  # piper-tts offline synthesis // OPTIONAL: set false for minimal
   # ai-ocr.enable = true;  # grim+slurp+tesseract screenshot OCR // OPTIONAL: leave off for minimal
+  # ----------------------------------------------------------------------
+
+  # ============================================================
+  # FURY AUDIO STUDIO — PipeWire voice DSP + GTK control window
+  # ============================================================
+  # Single-file module (modules/programs/fury-audio-studio.nix):
+  # mic/speaker denoise, 9-band EQ, voice FX. Autostart ON = DSP starts
+  # after login but self-skips when the saved toggle is OFF.
+  # ----------------------------------------------------------------------
+  services.fury-audio-studio.enable = true;
+  # services.fury-audio-studio.autostart = false; # fully manual --toggle use
   # ----------------------------------------------------------------------
 
 

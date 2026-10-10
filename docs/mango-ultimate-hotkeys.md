@@ -1,6 +1,6 @@
 # Mango Ultimate Hotkeys (fury) — LIVING DOC, keep updated
 
-> Last updated: 2026-10-08 (SUPER+ALT+P PiP stick toggle + AI-layer OCR/TTS/STT, 166 binds verified). MangoWC 0.17.0 + DMS 1.6 + Noctalia 5.1.0.
+> Last updated: 2026-10-10 (Fury Audio Studio SUPER+CTRL+A open + SUPER+CTRL+SHIFT+A DSP toggle, 168 binds verified). MangoWC 0.17.0 + DMS 1.6 + Noctalia 5.1.0.
 > Source of truth: `~/.config/mango/config.conf` (+ `media.conf`, `dms/` fragments).
 > This file is the hotkey reference to hand to any AI. When binds change, update this file AND the config together.
 > Supersedes `~/mango-dms-hotkeys.md` (left untouched as archive).
@@ -174,6 +174,13 @@ Note: single-gesture SHIFT-drag-float is impossible — mango retiles EVERY tile
 | `XF86MonBrightnessUp` | Brightness +5 |
 | `XF86MonBrightnessDown` | Brightness -5 |
 
+## Audio (Fury Audio Studio, NixOS module `services.fury-audio-studio`)
+
+| Shortcut | Action |
+|---|---|
+| `SUPER + CTRL + A` | Open studio window (noise removal, EQ, voice FX) |
+| `SUPER + CTRL + SHIFT + A` | Toggle voice DSP on/off (notifies; restores hardware) |
+
 ## Appearance / behavior
 
 `border 1px` red focus, `radius 12`, `gaps 5`, `focused_opacity 1.0`, `unfocused_opacity 0.9`, `shadows on` (floating only, size 10 blur 15). Mouse `accel -0.5 flat`. DMS fragments sourced from `~/.config/mango/dms/` (colors/layout/outputs/cursor/windowrules; `binds.conf` stays empty, DMS-managed). NOTE: the hardcoded Appearance block in `config.conf` comes *after* the `source=` lines, so it overrides `dms/layout.conf` — DMS Settings tweaks to gaps/border won't take effect unless that block is removed.
@@ -191,6 +198,7 @@ Note: single-gesture SHIFT-drag-float is impossible — mango retiles EVERY tile
 
 ## Changelog
 
+- 2026-10-10: added Fury Audio Studio binds (`SUPER+CTRL+A` open studio, `SUPER+CTRL+SHIFT+A` DSP toggle); appendix refreshed (168 binds).
 - 2026-10-08: added `SUPER+ALT+P` PiP stick toggle (`toggleglobal`; Hyprland `pin` parity); appendix refreshed.
 - 2026-09-13: created as the maintained copy (supersedes `mango-dms-hotkeys.md`). Added missing binds (Zen, brave-webgpu, portal restart, prev-group-member), new Mouse table incl. `SUPER+SHIFT+Left-click` float toggle, AI update rules.
 - 2026-09-13: added `SUPER+SHIFT+R` reload_config (dwm restart parity), restored missing `SUPER+SHIFT+H` aliases row.
@@ -211,16 +219,11 @@ Note: single-gesture SHIFT-drag-float is impossible — mango retiles EVERY tile
 - 2026-09-15: swapped the complete special-workspace trio from `SUPER+J` to `SUPER+U`; moved regular scratchpad/minimize/restore to the `SUPER+J` trio.
 - 2026-09-24: appendix-only fix — snapshot still showed pre-swap J/U actions + stale descs; re-synced 6 lines to live config (157/157 verified), tables needed no change.
 
-## Appendix: raw hotkey source (snapshot 2026-09-24)
+## Appendix: raw hotkey source (snapshot 2026-10-10)
 
-> Emergency restore copy — 157 binds, count-verified against `config.conf`. Source of truth stays the config files. Refresh per AI rule 8.
+> Emergency restore copy — 168 binds, count-verified against `config.conf`. Source of truth stays the config files. Refresh per AI rule 8.
 
 ```ini
-# Shell modes: default=DMS binds (boot mode), common=both shells,
-# noctalia=Noctalia binds (section below). Swap with SUPER+ALT+N/D.
-# NOTE: the noctalia section parses FIRST so SUPER+H shows DMS descs
-# (correct for the boot/default mode); in noctalia mode shared keys
-# still show DMS text — the markdown sheet is the accurate reference.
 # Shell modes: default=DMS binds (boot mode), common=both shells,
 # noctalia=Noctalia binds (section below). Swap with SUPER+ALT+N/D.
 # NOTE: the noctalia section parses FIRST so SUPER+H shows DMS descs
@@ -271,7 +274,7 @@ bind=SUPER+SHIFT,p,spawn,noctalia msg media toggle
 bind=SUPER,r,spawn,noctalia msg config-reload
 # Toggle Noctalia bar
 bind=CTRL+ALT+SUPER,b,spawn,noctalia msg bar-toggle
-# Bind sheet (this markdown)
+# Noctalia keybind cheatsheet (markdown in kitty, no plugin dupes)
 bind=SUPER,h,spawn_shell,kitty --class hotkeys -e bat ~/nixos-backups/mango-ultimate-hotkeys.md
 # Portal restart (same shell-agnostic fix as DMS mode)
 bind=SUPER+SHIFT,o,spawn_shell,systemctl --user restart xdg-desktop-portal xdg-desktop-portal-wlr && notify-send 'Portals' 'ScreenCast restarted — retry sharing'
@@ -329,6 +332,12 @@ keymode=common
 # NOTE: mango only strips comments starting at col 1 — never put "#"
 # inline on a bind line (it glues onto the last arg and breaks it).
 # =========================================================================
+
+# ---- Fury Audio Studio (NixOS module) ----
+# Studio window (settings only)
+bind=SUPER+CTRL,a,spawn,fury-audio-studio --gui-only
+# DSP on/off toggle (+notify)
+bind=SUPER+CTRL+SHIFT,a,spawn,fury-audio-studio --toggle
 
 # ---- One-key layout cycling: SUPER+L cycles all 14 mango 0.16 layouts ----
 circle_layout=tile,scroller,monocle,grid,deck,center_tile,vertical_tile,right_tile,vertical_scroller,vertical_grid,vertical_deck,dwindle,fair,vertical_fair
@@ -600,6 +609,21 @@ mousebind=SUPER,btn_right,moveresize,curresize
 axisbind=SUPER,UP,viewtoleft_have_client
 # Wheel to next used workspace
 axisbind=SUPER,DOWN,viewtoright_have_client
+
+# ---- Window rules ----
+windowrule=isnoborder:1,appid:^org\.gnome\.
+windowrule=isnoborder:1,appid:^kitty$
+windowrule=isfloating:1,appid:^com\.danklinux\.dms$
+# DMS Settings at a usable size (scoped by title so popups keep theirs)
+windowrule=width:1100,height:750,appid:^com\.danklinux\.dms$,title:^Settings$
+# Brave/FF PiP (YouTube or any site): float + always-on-top, no forced size
+# so Brave's remembered PiP size wins. Covers "Picture in picture",
+# "Picture-in-Picture", "PiP" with video title appended.
+windowrule=isfloating:1,isoverlay:1,title:^([Pp]icture[-\s]?[Ii]n[-\s]?[Pp]icture|PiP)(.*)$
+
+source=./dms/cursor.conf
+source = ./dms/binds.conf
+source=./dms/windowrules.conf
 ```
 
 ### media.conf (indented = hidden from SUPER+H by design)

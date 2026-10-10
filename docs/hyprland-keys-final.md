@@ -1,6 +1,6 @@
 # hyprland-keys-final — Fury Hyprland audit
 
-> Date: 2026-09-25 (v5 — vicinae on SUPER+ALT+SPACE, 153 binds).
+> Date: 2026-10-10 (v6 — Fury Audio Studio binds, 159 binds).
 > Source of truth: `~/.config/hypr/dms/binds.lua` (DMS cheatsheet slot, `require`d by `hyprland.lua`) + `binds.lua` (retired archive) + `hyprland.lua` (env/autostart/rules).
 > Mango config untouched throughout. Apply = save file (Hyprland hot-reloads; full `hyprctl reload` if stacked).
 
@@ -191,6 +191,12 @@
 | `SUPER + ALT + period` | `hl.dsp.focus({ monitor = "right" })` | focus next monitor (Mango chord) |
 | `SUPER + ALT + SHIFT + comma` | `hl.dsp.workspace.move({ monitor = "left" })` | send workspace to prev monitor (Mango tagmon) |
 | `SUPER + ALT + SHIFT + period` | `hl.dsp.workspace.move({ monitor = "right" })` | send workspace to next monitor (Mango tagmon) |
+
+## Fury Audio Studio
+| Chord | Action | Note |
+|---|---|---|
+| `SUPER + CTRL + A` | `hl.dsp.exec_cmd("fury-audio-studio --gui-only")` | open studio window, settings only (NixOS module services.fury-audio-studio) |
+| `SUPER + CTRL + SHIFT + A` | `hl.dsp.exec_cmd("fury-audio-studio --toggle")` | toggle voice DSP on/off, notifies |
 
 ## Retired (45 in binds.lua RETIRED block, restorable)
 Retired highlights: rofi launcher (vicinae restored 2026-09-25 on SUPER+ALT+SPACE), KeyHints/Keybinds.sh, fury-bar IPCs, Tide stack, Waybar pair (parked 2026-09-24), wallpaper scripts, RofiBeats, zsh-theme, ws10 trio, group-Tab pair, float-ALL (no API), Dropterminal (native scratch-term wins), ScreenShot.sh family, global kbd switch, monitor F9-12, comma-workspace, ALT+C rofi calc, Print-delay shots.

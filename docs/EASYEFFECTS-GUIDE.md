@@ -210,3 +210,12 @@ Static chains are fine; autoloading is better:
 | Movies, wild dynamics | EQ -> Multiband Compressor (gentle) -> Limiter |
 | Laptop speakers | EQ (high-pass!) -> Limiter |
 | Check your work | Level Meter + Spectrum at chain end, global Bypass to A/B |
+
+## 10. Lighter alternative: Fury Audio Studio
+
+If EasyEffects feels heavy (it runs its full rack + GUI constantly), try
+`fury-audio-studio` (NixOS module `services.fury-audio-studio`): mic/speaker
+RNNoise denoise, 9-band EQ, voice FX and telemetry in one small window, with
+its own `Fury Mic` / `Fury Speakers` virtual devices. Hotkeys (Hyprland +
+Mango): `SUPER+CTRL+A` opens the studio, `SUPER+CTRL+SHIFT+A` toggles the DSP.
+Run one or the other — stacking both DSP racks doubles latency for no gain.
