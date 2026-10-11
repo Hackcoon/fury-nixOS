@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Brave explicit-smooth launcher: native Wayland, no Vulkan/WebGPU.
+# (System `brave` is now the smooth build too; this pins it explicitly so
+# a wrapper change can never silently flip you back to XWayland/Vulkan.)
+export NIXOS_OZONE_WL=1
+exec brave --ozone-platform=wayland --disable-features=Vulkan,WebGPU --password-store=gnome-libsecret "$@"

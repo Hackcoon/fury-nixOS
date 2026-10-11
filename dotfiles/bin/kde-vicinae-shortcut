@@ -1,0 +1,6 @@
+#!/bin/sh
+# Run ONCE inside the KDE session to bind Meta+D to Vicinae.
+kglobalshortcutsrc edit:
+kwriteconfig6 --file kglobalshortcutsrc \
+  --group Services --key vicinae.desktop vicinae-toggle "Meta+D"
+echo "Done — log out/in of KDE once, then Meta+D opens Vicinae."
