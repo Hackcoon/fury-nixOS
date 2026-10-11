@@ -1,6 +1,6 @@
 # hyprland-keys-final — Fury Hyprland audit
 
-> Date: 2026-10-10 (v6 — Fury Audio Studio binds, 159 binds).
+> Date: 2026-10-11 (v7 — ALT utility row 1-4, 164 binds).
 > Source of truth: `~/.config/hypr/dms/binds.lua` (DMS cheatsheet slot, `require`d by `hyprland.lua`) + `binds.lua` (retired archive) + `hyprland.lua` (env/autostart/rules).
 > Mango config untouched throughout. Apply = save file (Hyprland hot-reloads; full `hyprctl reload` if stacked).
 
@@ -29,6 +29,8 @@
 ## Features / Extras
 | Chord | Action | Note |
 |---|---|---|
+| `SUPER + ALT + V` (PARKED) | `hl.dsp.exec_cmd("~/.config/hypr/UserScripts/shader_menu.sh")` | shader picker w/ live preview — provisional key, not set in stone |
+| `SUPER + ALT + X` (PARKED) | `hl.dsp.exec_cmd("hyprctl eval 'hl.config(...screen_shader = \"\"...)'")` | shaders off — provisional key, not set in stone |
 | `SUPER + SHIFT + T` | `hl.dsp.exec_cmd("/home/fury/.config/hypr/scripts/ThemeChanger.sh")` | global theme switcher wallust |
 | `SUPER + H` | `hl.dsp.exec_cmd("dms ipc call keybinds toggle hyprland")` | DMS keybind cheatsheet |
 | `SUPER + semicolon` | `hl.dsp.exec_cmd('dms ipc call spotlight toggleQuery ":e "')` | DMS emoji picker (needs emojiLauncher plugin) |
@@ -65,6 +67,14 @@
 | `SUPER + ALT + C` | `hl.dsp.exec_cmd("qalculate-qt")` | calculator Qalculate (floating rule in hyprland.lua) |
 | `SUPER + comma` | `hl.dsp.exec_cmd("dms ipc call settings focusOrToggle")` | DMS settings (Mango chord) |
 | `SHIFT_L + ALT_L` | `hl.dsp.exec_cmd("/home/fury/.config/hypr/scripts/Tak0-Per-Window-Switch.sh"), { ignore_mod…` | per-window layout switch |
+
+## ALT utility row (Dusky parity, added 2026-10-11)
+| Chord | Action | Note |
+|---|---|---|
+| `ALT + 1` | `hl.dsp.exec_cmd("kitty ... --class nmtui -e nmtui")` | Wi-Fi manager (nmtui replaces Dusky's Textual TUI) |
+| `ALT + 2` | `hl.dsp.exec_cmd("blueman-manager")` | Bluetooth manager (needs services.blueman) |
+| `ALT + 3` | `hl.dsp.exec_cmd("pavucontrol")` | audio mixer popup |
+| `ALT + 4` | `hl.dsp.exec_cmd("kitty ... --class journal -e .../UserScripts/journalctl.py")` | journal explorer (fzf journalctl) |
 
 ## System
 | Chord | Action | Note |

@@ -126,12 +126,21 @@ hl.bind("XF86AudioStop", hl.dsp.exec_cmd("/home/fury/.config/hypr/scripts/MediaC
 -- ═════════════════ FURY AUDIO STUDIO (NixOS module services.fury-audio-studio) ═════════════════
 hl.bind("SUPER + CTRL + A", hl.dsp.exec_cmd("fury-audio-studio --gui-only")) -- open Fury Audio Studio window (settings only, no forced DSP start)
 hl.bind("SUPER + CTRL + SHIFT + A", hl.dsp.exec_cmd("fury-audio-studio --toggle")) -- toggle Fury voice DSP on/off (notifies, restores hardware on off)
+hl.bind("ALT + 3", hl.dsp.exec_cmd("pavucontrol")) -- audio mixer popup (Dusky ALT+3 parity)
+hl.bind("ALT + 1", hl.dsp.exec_cmd("kitty --config /home/fury/.config/kitty/hyprland-wallust.conf --class nmtui -e nmtui")) -- Wi-Fi manager (nmtui replaces Dusky's custom Textual TUI)
+hl.bind("ALT + 2", hl.dsp.exec_cmd("blueman-manager")) -- Bluetooth manager (Dusky ALT+2 parity; needs services.blueman in audio.nix)
+hl.bind("ALT + 4", hl.dsp.exec_cmd("kitty --config /home/fury/.config/kitty/hyprland-wallust.conf --class journal -e /home/fury/.config/hypr/UserScripts/journalctl.py")) -- journal explorer (fzf journalctl)
 
 -- ═════════════════ SCREENSHOTS (DMS pipeline) ═════════════════
 hl.bind("SUPER + S", hl.dsp.exec_cmd("bash -c 'dms screenshot --stdout --no-file --no-clipboard --no-notify | satty --filename -'")) -- region select to satty (Mango chord)
 hl.bind("SUPER + ALT + S", hl.dsp.exec_cmd("bash -c 'pidof hyprlock >/dev/null || /run/current-system/sw/bin/hyprlock & sleep 2; systemctl suspend'")) -- lock-then-suspend via hyprlock (singleton-guarded)
 hl.bind("SUPER + SHIFT + S", hl.dsp.exec_cmd("bash -c 'dms screenshot window --stdout --no-file --no-clipboard --no-notify | satty --filename -'")) -- focused window to satty (Mango chord)
 hl.bind("SUPER + CTRL + SHIFT + S", hl.dsp.exec_cmd("bash -c 'dms screenshot full --stdout --no-file --no-clipboard --no-notify | satty --filename -'")) -- fullscreen to satty (Mango 3rd bind)
+
+-- ═════════════════ SHADERS (rofi picker + kill switch) ═════════════════
+-- (parked — uncomment if needed)
+-- hl.bind("SUPER + ALT + V", hl.dsp.exec_cmd("~/.config/hypr/UserScripts/shader_menu.sh")) -- shader picker with live preview (Up/Down preview, Enter commit, Esc rollback)
+-- hl.bind("SUPER + ALT + X", hl.dsp.exec_cmd("hyprctl eval 'hl.config({ decoration = { screen_shader = \"\" } })'")) -- shaders off (keyword is disabled on Lua-config Hyprland, must use eval)
 hl.bind("SUPER + X", hl.dsp.exec_cmd("bash -c 'region=$(slurp) || exit 0; grim -g \"$region\" - | tesseract stdin stdout -l eng 2>/dev/null | wl-copy; notify-send \"OCR\" \"$(wl-paste | head -c 200)\"'")) -- region select to text OCR extract (Mango chord)
 hl.bind("SUPER + T", hl.dsp.exec_cmd("bash -c 'wl-paste --no-newline | /home/fury/.local/bin/dusky-kokoro speak --stdin --mode interrupt'")) -- speak clipboard aloud Kokoro Heart/Bella GPU (Mango chord)
 hl.bind("SUPER + M", hl.dsp.exec_cmd("hyprwhspr-rs record toggle")) -- STT record toggle Parakeet (Mango chord)
