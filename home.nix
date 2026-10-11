@@ -58,6 +58,15 @@
   # ~/.local/bin on PATH (nixos-doctor symlink lives here).
   home.sessionPath = [ "$HOME/.local/bin" ];
 
+  # Micro CLI tools (136× .sh: crypto/encoding/text/time) deployed to
+  # ~/.local/bin alongside unmanaged files (no name collisions).
+  # Source: dotfiles/bin (git-tracked mirror). Rebuild to deploy.
+  home.file.".local/bin" = {
+    source = ./dotfiles/bin;
+    recursive = true;
+    executable = true;
+  };
+
   # ----------------------------------------------------------------
   # XDG + web apps (Brave --app launchers)
   # ----------------------------------------------------------------
