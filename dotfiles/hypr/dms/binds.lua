@@ -84,6 +84,14 @@ hl.bind("SUPER + CTRL + D", hl.dsp.layout("removemaster")) -- fewer masters
 hl.bind("SUPER + I", hl.dsp.layout("addmaster")) -- more masters
 hl.bind("SUPER + CTRL + Return", hl.dsp.layout("swapwithmaster")) -- swap with master
 hl.bind("SUPER + SHIFT + I", hl.dsp.layout("togglesplit")) -- toggle dwindle split
+
+-- ═══════════════════ SCROLLING (WS1 filmstrip) — trial 2026-10-10 ═══════════════════
+-- Mouse drag in scrolling always splits up/down (upstream #14274), so use these
+-- instead of dragging. No-ops on dwindle/master workspaces. REVERT: delete the
+-- 3 lines below + `hyprctl reload` (backup: binds.lua.pre-scrolling-binds-20261010).
+hl.bind("SUPER + CTRL + P", hl.dsp.layout("promote")) -- pop window into its own column
+hl.bind("SUPER + CTRL + comma", hl.dsp.layout("swapcol l")) -- swap column left
+hl.bind("SUPER + CTRL + period", hl.dsp.layout("swapcol r")) -- swap column right
 hl.bind("SUPER + P", hl.dsp.exec_cmd("dms ipc call powerprofile cycle")) -- DMS power profile cycle (Mango chord)
 hl.bind("SUPER + SHIFT + M", hl.dsp.exec_cmd("dms ipc call processlist focusOrToggle")) -- DMS process list (Mango chord)
 
@@ -114,6 +122,10 @@ hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("/home/fury/.config/hypr/scripts/MediaC
 hl.bind("XF86AudioNext", hl.dsp.exec_cmd("/home/fury/.config/hypr/scripts/MediaCtrl.sh --nxt"), { locked = true }) -- next track
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("/home/fury/.config/hypr/scripts/MediaCtrl.sh --prv"), { locked = true }) -- prev track
 hl.bind("XF86AudioStop", hl.dsp.exec_cmd("/home/fury/.config/hypr/scripts/MediaCtrl.sh --stop"), { locked = true }) -- stop track
+
+-- ═════════════════ FURY AUDIO STUDIO (NixOS module services.fury-audio-studio) ═════════════════
+hl.bind("SUPER + CTRL + A", hl.dsp.exec_cmd("fury-audio-studio --gui-only")) -- open Fury Audio Studio window (settings only, no forced DSP start)
+hl.bind("SUPER + CTRL + SHIFT + A", hl.dsp.exec_cmd("fury-audio-studio --toggle")) -- toggle Fury voice DSP on/off (notifies, restores hardware on off)
 
 -- ═════════════════ SCREENSHOTS (DMS pipeline) ═════════════════
 hl.bind("SUPER + S", hl.dsp.exec_cmd("bash -c 'dms screenshot --stdout --no-file --no-clipboard --no-notify | satty --filename -'")) -- region select to satty (Mango chord)

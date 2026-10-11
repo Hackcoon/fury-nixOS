@@ -26,6 +26,21 @@
   networking.enableIPv6 = false;
   # ----------------------------------------------------------------------
 
+  # ── UDP conntrack timeouts: HOTS disconnect fix (2026-10-10) ──
+  # Heroes of the Storm holds one long-lived UDP association to the game
+  # server (TCP :1119 stays ESTAB, UDP is the gameplay path). Defaults
+  # (30s / 120s) expire the mapping during quiet phases (draft, loading),
+  # and HotS cannot re-punch mid-match — client shows "disconnected" and only
+  # a relaunch rejoins. 60s/180s keeps idle halves alive longer locally.
+  # NOTE: the home router (192.168.1.1) has its own UDP timeout — if drops
+  # persist, raise it there too or set a static port forward for
+  # UDP 1119-1120, 3724, 4000, 6113-6114. Revert: delete this block.
+  boot.kernel.sysctl = {
+    "net.netfilter.nf_conntrack_udp_timeout" = 60;
+    "net.netfilter.nf_conntrack_udp_timeout_stream" = 180;
+  };
+  # ----------------------------------------------------------------------
+
   # ── SSH + packet capture ──
   # Wireshark capture without sudo requires the `wireshark` group
   # (done in modules/users/users.nix; this was a missing piece before).

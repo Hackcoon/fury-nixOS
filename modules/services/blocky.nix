@@ -8,13 +8,13 @@
 # aren't knowable at build time): set dns.upstreamOverride to the router or
 # plain IPs to keep adblocking on DoT-blocking networks, or disable Blocky
 # for true native.
-# VERSION NOTE: nixpkgs 26.05 ships Blocky 0.29.0, which uses
-#   blocking.blackLists / blocking.whiteLists.
-# Newer Blocky (>=0.33, e.g. nixpkgs-unstable 0.34.0) renamed these to
-#   blocking.denyLists / blocking.allowLists. Overriding with
-#   `services.blocky.package = unstablePkgs.blocky;` also requires renaming
-#   every blackLists->denyLists and whiteLists->allowLists below, then
-#   `nixos-rebuild build` to validate. Staying on 0.29 for now — no action.
+# VERSION NOTE: flake nixpkgs ships Blocky 0.29.0, which ONLY understands
+#   blocking.blackLists / blocking.whiteLists. The binary prints deprecation
+#   WARNs + an ERROR line for these keys, but still exits 0 ("Configuration
+#   is valid", verified 2026-10-11 against the store binary directly) — the
+#   noise is cosmetic, the build passes. DO NOT rename to denyLists /
+#   allowLists until services.blocky.package is bumped past 0.29 (the 0.29
+#   struct has no such fields and validation hard-fails; tried 2026-10-11).
 # OPTIONAL: drop for minimal (dns.nix DoT still applies without it).
 #
 # NATIVE NETWORKS (hotel/cafe/portals) — three postures, pick one:
@@ -219,8 +219,13 @@
         # Example: site.example.com broken -> add both lines below, rebuild.
         # NOTE: this Blocky version uses whiteLists (newer uses allowLists).
         whiteLists.ads = [
-          # "needed-site.com"
-          # "*.needed-site.com"
+          # HOTS disconnect fix (2026-10-10): Battle.net spams these every few
+          # seconds in-game; answering 0.0.0.0 forces client-side retry storms.
+          # Core game/login domains were never blocked — this just quiets noise.
+          # Revert: delete the three lines below and rebuild.
+          "telemetry-in.battle.net"
+          "rum.battle.net"
+          # "www.googletagmanager.com"
         ];
         clientGroupsBlock.default = [ "ads" ];
       };
