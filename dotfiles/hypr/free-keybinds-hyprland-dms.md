@@ -1,4 +1,4 @@
-# Free keybinds — Hyprland (fury) — generated 2026-10-11 from `dms/binds.lua` (166 binds)
+# Free keybinds — Hyprland (fury) — generated 2026-10-11 from `dms/binds.lua` (164 binds)
 
 > Regenerate: `rg -o 'hl\.bind\("([^"]+)"' dms/binds.lua | sort | uniq -c`.
 > Source of truth: `dms/binds.lua` (active, DMS cheatsheet reads it) + `binds.lua` (retired archive).
@@ -26,12 +26,12 @@ FREE: `C, E, G, I, M, N, P, Q, S, T, U, V, W, X, Y, Z, 0, comma (,), period (.),
 
 ## SUPER+ALT (wide open)
 
-Taken: `A C L O P S V X, SPACE (vicinae), comma, period, down/left/right/up, mouse_down/up (zoom)`
+Taken: `A C L O P S, SPACE (vicinae), comma, period, down/left/right/up, mouse_down/up (zoom)`
 
-FREE: `B D E F G H I J K M N Q R T U W Y Z, Return, Tab, 0-9, semicolon (;), slash (/), apostrophe ('), minus (-), equal (=), brackets, backslash (\), grave (`)`
+FREE: `B D E F G H I J K M N Q R T U V W X Y Z, Return, Tab, 0-9, semicolon (;), slash (/), apostrophe ('), minus (-), equal (=), brackets, backslash (\), grave (`)`
 
 > Note: `SUPER+ALT+B` / `SUPER+CTRL+B` Waybar binds are commented out (Waybar breaks DMS binds). Treat as reserved, not free.
-> Note: `SUPER+ALT+V` (shader picker) / `SUPER+ALT+X` (shaders off) taken (shaders, active since 2026-10-11).
+> Note: `SUPER+ALT+V` (shader picker) / `SUPER+ALT+X` (shaders off) are parked commented-out in `dms/binds.lua` — proposed keys, not set in stone.
 
 ## Triple layers (nearly untouched)
 

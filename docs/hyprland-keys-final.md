@@ -1,6 +1,6 @@
 # hyprland-keys-final — Fury Hyprland audit
 
-> Date: 2026-10-11 (v7 — ALT utility row 1-4, 166 binds).
+> Date: 2026-10-11 (v7 — ALT utility row 1-4, 164 binds).
 > Source of truth: `~/.config/hypr/dms/binds.lua` (DMS cheatsheet slot, `require`d by `hyprland.lua`) + `binds.lua` (retired archive) + `hyprland.lua` (env/autostart/rules).
 > Mango config untouched throughout. Apply = save file (Hyprland hot-reloads; full `hyprctl reload` if stacked).
 
@@ -29,8 +29,8 @@
 ## Features / Extras
 | Chord | Action | Note |
 |---|---|---|
-| `SUPER + ALT + V` | `hl.dsp.exec_cmd("~/.config/hypr/UserScripts/shader_menu.sh")` | shader picker w/ live preview |
-| `SUPER + ALT + X` | `hl.dsp.exec_cmd("hyprctl eval 'hl.config(...screen_shader = \"\"...)'")` | shaders off |
+| `SUPER + ALT + V` (PARKED) | `hl.dsp.exec_cmd("~/.config/hypr/UserScripts/shader_menu.sh")` | shader picker w/ live preview — provisional key, not set in stone |
+| `SUPER + ALT + X` (PARKED) | `hl.dsp.exec_cmd("hyprctl eval 'hl.config(...screen_shader = \"\"...)'")` | shaders off — provisional key, not set in stone |
 | `SUPER + SHIFT + T` | `hl.dsp.exec_cmd("/home/fury/.config/hypr/scripts/ThemeChanger.sh")` | global theme switcher wallust |
 | `SUPER + H` | `hl.dsp.exec_cmd("dms ipc call keybinds toggle hyprland")` | DMS keybind cheatsheet |
 | `SUPER + semicolon` | `hl.dsp.exec_cmd('dms ipc call spotlight toggleQuery ":e "')` | DMS emoji picker (needs emojiLauncher plugin) |

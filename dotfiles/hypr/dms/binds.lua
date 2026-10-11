@@ -138,8 +138,9 @@ hl.bind("SUPER + SHIFT + S", hl.dsp.exec_cmd("bash -c 'dms screenshot window --s
 hl.bind("SUPER + CTRL + SHIFT + S", hl.dsp.exec_cmd("bash -c 'dms screenshot full --stdout --no-file --no-clipboard --no-notify | satty --filename -'")) -- fullscreen to satty (Mango 3rd bind)
 
 -- ═════════════════ SHADERS (rofi picker + kill switch) ═════════════════
-hl.bind("SUPER + ALT + V", hl.dsp.exec_cmd("~/.config/hypr/UserScripts/shader_menu.sh")) -- shader picker with live preview (Up/Down preview, Enter commit, Esc rollback)
-hl.bind("SUPER + ALT + X", hl.dsp.exec_cmd("hyprctl eval 'hl.config({ decoration = { screen_shader = \"\" } })'")) -- shaders off (keyword is disabled on Lua-config Hyprland, must use eval)
+-- (parked — uncomment if needed)
+-- hl.bind("SUPER + ALT + V", hl.dsp.exec_cmd("~/.config/hypr/UserScripts/shader_menu.sh")) -- shader picker with live preview (Up/Down preview, Enter commit, Esc rollback)
+-- hl.bind("SUPER + ALT + X", hl.dsp.exec_cmd("hyprctl eval 'hl.config({ decoration = { screen_shader = \"\" } })'")) -- shaders off (keyword is disabled on Lua-config Hyprland, must use eval)
 hl.bind("SUPER + X", hl.dsp.exec_cmd("bash -c 'region=$(slurp) || exit 0; grim -g \"$region\" - | tesseract stdin stdout -l eng 2>/dev/null | wl-copy; notify-send \"OCR\" \"$(wl-paste | head -c 200)\"'")) -- region select to text OCR extract (Mango chord)
 hl.bind("SUPER + T", hl.dsp.exec_cmd("bash -c 'wl-paste --no-newline | /home/fury/.local/bin/dusky-kokoro speak --stdin --mode interrupt'")) -- speak clipboard aloud Kokoro Heart/Bella GPU (Mango chord)
 hl.bind("SUPER + M", hl.dsp.exec_cmd("hyprwhspr-rs record toggle")) -- STT record toggle Parakeet (Mango chord)
