@@ -36,6 +36,7 @@
       };
     };
   };
+  services.blueman.enable = true; # applet + blueman-manager GUI (ALT+2 bind)
   # ----------------------------------------------------------------------
 
   # ── Bluetooth codec upgrades (SBC-XQ + mSBC wideband) ──
