@@ -58,6 +58,8 @@ every edit — `sudo chown -R $(whoami):users /etc/nixos` (root keeps
 - Laptop GPU: `nvidia-offload <app>` runs one app on the 1660 Ti;
   `nvidia-prime.mode = "sync"` makes it render everything (plugged-in only).
 - Laptop power: `laptop.powerMode = powersave | balanced | performance`.
+- Gaming (desktop): Lutris + Battle.net via `programs.gaming`; HotS
+  disconnect troubleshooting lives in `docs/HOTS-DISCONNECT-FIX.md`.
 - Rollback: every build is a boot generation; `nix-rollback` / `nh-rollback`
   revert. Btrfs snapshots (opt-in `btrfs-root`) add file-level undo.
 
@@ -70,11 +72,12 @@ hardware-configuration.nix  # generated per machine; repo copy is an example, re
 home.nix                # Home Manager user config
 modules/core/           # boot, nix, locale, network, dns, default-apps,
                         #   appimage, flatpak, fonts
-modules/hardware/      # nvidia, amdgpu, audio, ssd, laptop, power-modes,
-                        #   hardware-profiles, razer, realtek-eee
+modules/hardware/      # nvidia, amdgpu, intel-gpu, nouveau, audio, ssd, laptop,
+                         #   power-modes, hardware-profiles, razer, realtek-eee
 modules/desktop/        # kde, hyprland, mango-dms, fury-dwm, xfce-chicago95,
                         #   qylock, themes, portals
-modules/programs/       # shell, gaming, virtualisation, thunar, firefox, zen
+modules/programs/       # shell, gaming, virtualisation, thunar, firefox, zen,
+                         #   fury-audio-studio
 modules/ai/             # ai-services, ai-stt, ai-tts, ai-ocr, comfyui (HEAVY)
 modules/services/       # printing, searxng, blocky
 modules/system/         # desktop-extras, btrfs
