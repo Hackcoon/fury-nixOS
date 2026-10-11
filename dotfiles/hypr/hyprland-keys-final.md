@@ -1,6 +1,6 @@
 # hyprland-keys-final — Fury Hyprland audit
 
-> Date: 2026-10-11 (v7 — ALT utility row 1-4, 164 binds).
+> Date: 2026-10-11 (v7 — ALT utility row 1-4, 165 binds).
 > Source of truth: `~/.config/hypr/dms/binds.lua` (DMS cheatsheet slot, `require`d by `hyprland.lua`) + `binds.lua` (retired archive) + `hyprland.lua` (env/autostart/rules).
 > Mango config untouched throughout. Apply = save file (Hyprland hot-reloads; full `hyprctl reload` if stacked).
 
@@ -75,6 +75,7 @@
 | `ALT + 2` | `hl.dsp.exec_cmd("blueman-manager")` | Bluetooth manager (needs services.blueman) |
 | `ALT + 3` | `hl.dsp.exec_cmd("pavucontrol")` | audio mixer popup |
 | `ALT + 4` | `hl.dsp.exec_cmd("kitty ... --class journal -e .../UserScripts/journalctl.py")` | journal explorer (fzf journalctl) |
+| `ALT + 5` | `hl.dsp.exec_cmd("kitty ... --class toolbox -e .../UserScripts/toolbox.sh")` | micro tools picker (fzf toolbox) |
 
 ## System
 | Chord | Action | Note |
