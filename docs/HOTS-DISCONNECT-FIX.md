@@ -119,6 +119,37 @@ Revert: delete the block, rebuild.
   port-forward UDP 1119-1120, 3724, 4000, 6113-6114 to this PC
   (`192.168.1.135`). Current match still needs a relaunch regardless.
 
+## Update 2026-10-12 — Windows never drops: it's the Linux path
+Same machine/network on Windows: zero disconnects. Router, ISP, and cabling
+are exonerated as primary causes — the difference is client-side on Linux.
+Ranked Linux-specific suspects:
+1. **Client stall → lockstep timeout.** HotS drops clients that stop answering.
+   DXVK shader-compile hitches (new map/effects each session) and the
+   `schedutil` governor (GameMode can't set performance — pkexec denied) can
+   stall the client for seconds where native D3D11 on Windows never hitches.
+   Fits "random once per session" (fresh compiles each new session).
+2. **Wine/Proton UDP stack differences** (socket options, ICMP-unreachable
+   handling, interface enumeration) vs native Winsock.
+3. **r8169 Linux driver** vs the Windows Realtek driver (burst loss under
+   load). NIC counters have been clean so far — weak suspect.
+4. Router NAT expiry is demoted: same router serves Windows fine (Windows may
+   keep UDP alive differently, so not fully excluded — keep the timeout fixes).
+
+## Capture kit for the next drop (distinguishes stall vs network)
+- `PROTON_LOG=1` is now in the Lutris game env (yml `system.env`, takes
+  effect next Battle.net launch, log lands in `~/steam-0.log`). Remove after
+  capture. If Lutris Configure->Save strips it, re-add it the same way.
+- Before queueing, start a UDP ring buffer (needs sudo, run by hand):
+  `sudo tcpdump -i enp5s0 -C 50 -W 4 -w /tmp/hots-udp.pcap udp`
+  (keeps the last ~200MB; all UDP, game server IP varies per match).
+- Optional next-session CPU test (gamemode can't do this itself):
+  `echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor`
+  then revert with `schedutil` after. If drops stop on performance, it's
+  stall-induced.
+- After a drop, analyze: if the client stops SENDING seconds before the
+  server goes quiet → client stall (hypothesis 1); if the client keeps
+  sending while the   server stops answering → network/server path.
+
 ## Verify the next drop (do before changing anything else)
 ```bash
 date -u; ss -tnp | grep 1119; ss -una | head -30
