@@ -1,28 +1,27 @@
 # ============================================================================
-# HYPRLAND — core compositor module (NO tide-island dependencies)
+# hyprland.nix — Hyprland core: compositor + rice toolkit (NO tide-island deps).
 #
-# This module is self-contained. It enables Hyprland, the launcher stack
-# (Vicinae + rofi), and every utility your binds/scripts/waybar need.
-# fury-bar (your quickshell pill-bar) is started from hyprland.lua and only
-# needs `quickshell` from here.
-#
-# Toggle tide-island SEPARATELY via modules/desktop/tide-island.nix —
-# comment its import in configuration.nix to remove the island completely.
+# Self-contained: enables Hyprland, the launcher stack (Vicinae + rofi), and
+# every utility binds/scripts/waybar need. fury-bar (quickshell pill-bar)
+# starts from hyprland.lua and only needs `quickshell` from here. Toggle
+# tide-island SEPARATELY via modules/unused/tide-island.nix — uncomment its
+# import in configuration.nix to bring the island back.
+# HEAVY: full DE stack — keep only if Hyprland is main (or the only DE).
+# ============================================================================
 { config, pkgs, lib, ... }:
 
 {
-  # =========================================================================
-  # HYPRLAND — the compositor
-  # =========================================================================
+  # ── The compositor (+ XWayland for Steam/games) ──
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;   # X11 apps (Steam, some games) keep working
   };
+  # ----------------------------------------------------------------------
 
-  # =========================================================================
-  # EVERYTHING YOUR RICE NEEDS (one list — NixOS rejects duplicate
-  # environment.systemPackages definitions in the same module)
-  # =========================================================================
+  # ── Rice toolkit: one list, grouped by job ──
+  # Single environment.systemPackages (NixOS rejects duplicate definitions in
+  # the same module). Group labels stay as landmarks. Layout plugins: hy3
+  # active, hyprscrolling parked (Mango-scroller parity if wanted).
   environment.systemPackages = with pkgs; [
     # ---- Hyprland first-party ecosystem ----
     hyprsunset       # night light (SUPER+N toggle via Hyprsunset.sh)
@@ -32,6 +31,10 @@
     hyprpicker       # on-screen color picker
     hyprpolkitagent  # password prompts for privileged apps
 
+    # ---- Hyprland layout plugins (SUPER+L cycles all four) ----
+    # hyprlandPlugins.hyprscrolling  # column scroller (Mango-scroller parity)
+    hyprlandPlugins.hy3           # i3-style (tabs + splits)
+
     # ---- Launchers ----
     vicinae        # native launcher — SUPER+D; black/white theme at
                    # ~/.local/share/vicinae/themes/monochrome-fury.toml
@@ -39,24 +42,24 @@
     rofi-calc      # RofiCalc.sh  (modi: calc — qalculate backend)
     rofi-emoji     # Emoticon.sh  (modi: emoji)
 
-    # ---- Quickshell: runtime for fury-bar (your main shell) ----
+    # ---- Quickshell: runtime for fury-bar (the main shell) ----
     quickshell     # also lets SwitchShell.sh flip to any quickshell config
 
     # ---- Wallpapers & bar ----
-    awww           # swww fork — JaKooLit Wallpaper*.sh use it; tide drives it too
+    awww           # swww fork — Wallpaper*.sh use it; tide drives it too
     waybar         # status bar (WaybarStyles.sh / WaybarLayout.sh cycle it)
     wlogout        # logout menu (Wlogout.sh)
-    wallust        # JaKooLit ThemeChanger.sh — global theme from wallpaper
+    wallust        # ThemeChanger.sh — global theme from wallpaper
 
     # ---- Notifications ----
     swaynotificationcenter   # swaync + swaync-client (SUPER SHIFT+N panel)
-    libnotify                # notify-send (all your scripts use it)
+    libnotify                # notify-send (used by all scripts)
 
     # ---- Screenshots ----
     grim
     slurp
     satty          # SUPER+SHIFT+S annotator
-    swappy         # ScreenShot.sh --swappy backend (JaKooLit parity)
+    swappy         # ScreenShot.sh --swappy backend
 
     # ---- Audio / media / misc (used by scripts + binds + fury-bar) ----
     pamixer                # Volume.sh CLI control
@@ -76,7 +79,10 @@
     psmisc                 # killall (Refresh.sh, WaybarStyles.sh, WallpaperEffects.sh)
     mpvpaper               # video wallpapers (WallpaperSelect.sh video branch)
   ];
+  # ----------------------------------------------------------------------
 
-  # UPower: battery status for fury-bar/island
+  # ── UPower for bars (mkDefault so laptop.nix owns thresholds) ──
+  # fury-bar/island read battery over this; laptop.nix sets the real policy.
   services.upower.enable = lib.mkDefault true;
+  # ----------------------------------------------------------------------
 }

@@ -1,13 +1,24 @@
-# NVIDIA proprietary driver (TU116 card) + graphics stack.
+# ============================================================================
+# nvidia.nix — NVIDIA proprietary driver, DESKTOP 1660 SUPER (TU116) only.
+#
+# UNCONDITIONAL: applies whenever imported — comment this file out of imports
+# on the laptop (PRIME profile covers it) and the AMD PC. Tuned for TU116:
+# proprietary userspace, stable driver branch, sleep-safe VRAM handling.
+# ============================================================================
 { config, pkgs, lib, ... }:
 
 {
-  # Required for the proprietary NVIDIA driver
+  # ── Unfree + driver binding ──
+  # allowUnfree covers the proprietary NVIDIA userland; videoDrivers loads it
+  # for both X11 and Wayland.
   nixpkgs.config.allowUnfree = true;
-
-  # Load the proprietary NVIDIA driver for both X11 and Wayland
   services.xserver.videoDrivers = [ "nvidia" ];
+  # ----------------------------------------------------------------------
 
+  # ── Driver behavior: sleep-safe, modesetting, TU116 userspace ──
+  # open=false = proprietary userspace (best for TU116; 50xx-series would flip
+  # this true). stable branch over latest: fewer surprises on a machine that
+  # must Just Boot.
   hardware.nvidia = {
     # Saves VRAM contents to disk before sleep and restores on wake —
     # prevents KWin/Plasma from losing display buffers and crashing
@@ -22,7 +33,9 @@
     nvidiaSettings = true;
     package = config.boot.kernelPackages.nvidiaPackages.stable;
   };
+  # ----------------------------------------------------------------------
 
+  # ── Session env: GLX to NVIDIA, nothing forced ──
   environment.sessionVariables = {
     # Direct GLX apps to NVIDIA driver
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
@@ -35,15 +48,17 @@
     # back to X11.
     # NIXOS_OZONE_WL = "1";
   };
+  # ----------------------------------------------------------------------
 
-  # OpenGL/graphics support, including 32-bit for gaming
+  # ── Graphics stack: GL + 32-bit + Vulkan loader ──
   hardware.graphics = {
     enable = true;
-    enable32Bit = true;
+    enable32Bit = true; # 32-bit for gaming
     # vulkan-loader: Brave (and other Chromium browsers with the Vulkan
     # feature) needs libvulkan.so.1 at runtime. make-brave.nix only adds
     # the ICD search path (XDG_DATA_DIRS), not the loader itself, so we
     # provide it via the driver runpath.
     extraPackages = [ pkgs.vulkan-loader ];
   };
+  # ----------------------------------------------------------------------
 }

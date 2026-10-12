@@ -1,81 +1,94 @@
-# Nix-the-package-manager configuration: settings, caches, gc, helpers.
+# ============================================================================
+# nix.nix — Nix-the-package-manager: settings, caches, GC, helpers.
+#
+# Build parallelism for a 12-thread / 31GB box, Flakes + store optimization,
+# CUDA/comfyui binary caches (so CUDA packages download instead of compiling),
+# `nh` as the ONLY garbage collector (weekly, 30d + 10-gen floor), nix-ld
+# for unpatched binaries. For minimal/fastest builds set cudaSupport=false.
+# ============================================================================
 { config, pkgs, lib, ... }:
 
 {
-  # Limit build parallelism so heavy compiles (CUDA etc.) don't
-  # overheat the CPU
-  nix.settings.cores = 2;      # threads per build (was 0 = all 12)
-  nix.settings.max-jobs = 1;   # concurrent builds (was auto = 12)
+  # ── Build parallelism (8 threads x 2 jobs) ──
+  # Was cores=2 max-jobs=1 to avoid overheat, but that made any source build
+  # ~6x slower (hours on this 12-thread machine). 8/2 is safe for 31GB RAM;
+  # drop to 6/1 if hot. Revert to 2 and 1 if thermals demand it.
+  nix.settings.cores = 8;      # threads per build (was 2; 0 = all 12)
+  nix.settings.max-jobs = 2;   # concurrent builds (was 1; auto = 12)
+  # ----------------------------------------------------------------------
 
   nix.settings = {
-    # Modern Nix commands and Flakes
+    # ── Flakes + store optimization ──
+    # Modern Nix commands and automatic store dedup to save disk.
     experimental-features = [ "nix-command" "flakes" ];
-
-    # Automatically optimize the Nix store to save disk space
     auto-optimise-store = true;
+    # ----------------------------------------------------------------------
 
-    # Additional binary cache hosting pre-built CUDA packages.
-    # Without this, anything built with cudaSupport = true compiles
-    # from source locally (cache.nixos.org doesn't build CUDA).
-    # Note: the official cache is merged in automatically alongside
-    # this list — verified in your live /etc/nix/nix.conf.
-    substituters = [ "https://cache.nixos-cuda.org" ];
-
-    # Public key used to verify packages fetched from the cache above.
+    # ── Binary caches: pre-built CUDA packages ──
+    # Without these, anything with cudaSupport=true compiles from source
+    # locally (cache.nixos.org doesn't build CUDA). The official cache is
+    # merged in automatically alongside this list — verified in live
+    # /etc/nix/nix.conf. comfyui.cachix.org + nix-community.cachix.org come
+    # from the comfyui-nix FLAKE: pre-built ComfyUI + PyTorch CUDA wheels
+    # (~2GB download instead of a multi-hour source build). The daemon must
+    # trust these keys or the flake falls back to compiling torch/CUDA locally.
+    substituters = [
+      "https://cache.nixos-cuda.org"
+      "https://comfyui.cachix.org"
+      "https://nix-community.cachix.org"
+    ];
     trusted-public-keys = [
       "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
+      "comfyui.cachix.org-1:33mf9VzoIjzVbp0zwj+fT51HG0y31ZTK3nzYZAX0rec="
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
     ];
+    # ----------------------------------------------------------------------
 
-    # Adds you to nix's trusted-users list: `nix profile install`,
-    # `nh os switch`, and later Home Manager can operate without sudo.
-    # On a single-user desktop with wheel/sudo this is a convenience,
-    # not a security boundary change.
+    # ── trusted-users: fury runs Nix without sudo ──
+    # `nix profile install`, `nh os switch`, and later Home Manager operate
+    # without sudo. Single-user desktop with wheel/sudo: convenience, not a
+    # security boundary change.
     trusted-users = [ "root" "fury" ];
+    # ----------------------------------------------------------------------
   };
 
-  # Globally enables CUDA support for packages in nixpkgs that support
-  # it (blender, ffmpeg, ML libs...). Combined with the CUDA cache
-  # above, those packages are fetched pre-built instead of compiled.
+  # ── CUDA support globally ON (flip for minimal) ──
+  # Enables CUDA in every nixpkgs package that supports it (blender, ffmpeg,
+  # ML libs...). Combined with the caches above, those are fetched pre-built
+  # instead of compiled. Set false for fastest/minimal builds.
   nixpkgs.config.cudaSupport = true;
+  # ----------------------------------------------------------------------
 
-  # EOL Electron/pnpm versions that some apps still need. The better
-  # long-term fix is finding which app pulls each one in and updating
-  # that app.
+  # ── EOL Electron/pnpm that some apps still need ──
+  # Better long-term fix: find which app pulls each one in and update that app.
   nixpkgs.config.permittedInsecurePackages = [
     "electron-40.10.5"
     "electron-39.8.10"
     "pnpm-10.29.2"
   ];
+  # ----------------------------------------------------------------------
 
-  # Automated garbage collection now runs via `nh clean` below —
-  # do NOT re-enable both: each creates its own weekly GC timer
-  # and they race on the store lock (nixpkgs emits a warning for
-  # exactly this combination).
-  # `nh clean` is a superset of nix-collect-garbage (retention by
-  # count AND age, gcroot cleanup) and its timer is Persistent=true,
-  # so missed weekly runs catch up after boot — nix.gc's timer
-  # doesn't, so runs are simply lost when the machine is off.
+  # ── Garbage collection: `nh clean` ONLY (nix.gc stays off) ──
+  # Do NOT enable both: each creates its own weekly GC timer and they race on
+  # the store lock (nixpkgs warns for exactly this combination). `nh clean` is
+  # a superset of nix-collect-garbage (retention by count AND age, gcroot
+  # cleanup) and its timer is Persistent=true, so missed weekly runs catch up
+  # after boot — nix.gc's timer doesn't, runs are lost when the machine is off.
   # nix.gc = {
   #   automatic = true;
   #   dates = "weekly";
   #   options = "--delete-older-than 30d";
   # };
-
-  # nh — friendlier nixos-rebuild wrapper: `nh os switch` shows a
-  # colored diff, `nh clean keep 5` prunes generations in a TUI.
-  # Pointed at this flake, it uses /etc/nixos#nixos automatically.
   programs.nh = {
     enable = true;
-    flake = "/etc/nixos";
+    flake = "/etc/nixos"; # `nh os switch` uses /etc/nixos#nixos automatically
     clean = {
-      enable = true;      # enables the `nh clean` command
-      dates = "weekly";   # weekly; timer is Persistent (catches up after downtime)
+      enable = true;
+      dates = "weekly";   # timer is Persistent (catches up after downtime)
 
-      # The ONLY garbage collector now — replaces the commented
-      # nix.gc block above. Without extraArgs, nh defaults to
-      # --keep 1 --keep-since 0h (current generation only!), which
-      # would silently kill rollback safety. This restores the old
-      # policy plus a floor:
+      # Without extraArgs, nh defaults to --keep 1 --keep-since 0h (current
+      # generation only!), which would silently kill rollback safety. This
+      # restores the old policy plus a floor:
       #   --keep-since 30d : keep everything from the last 30 days
       #                       (same as the old nix.gc options)
       #   --keep 10        : always keep at least 10 generations,
@@ -86,7 +99,11 @@
       extraArgs = "--keep-since 30d --keep 10 --keep-one";
     };
   };
+  # ----------------------------------------------------------------------
 
-  # Enable nix-ld to run unpatched dynamic binaries (non-FHS compliance)
+  # ── nix-ld: run unpatched dynamic binaries ──
+  # Needed for non-FHS-compliant binaries (npm/node tarballs, AppImages
+  # outside binfmt, proprietary tools). Harmless when unused.
   programs.nix-ld.enable = true;
+  # ----------------------------------------------------------------------
 }

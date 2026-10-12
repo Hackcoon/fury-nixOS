@@ -2,3 +2,6 @@ result
 *.bak*
 *.tar.gz
 result-*
+
+# machine-specific: regenerate per install, never publish
+/hardware-configuration.nix

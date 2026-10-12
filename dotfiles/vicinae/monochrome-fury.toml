@@ -1,0 +1,72 @@
+# ============================================================================
+# Vicinae theme: monochrome-fury — pure black & white, accent = white
+# Icons & shortcut squares inherit Vicinae's default look (icon theme set
+# separately in Vicinae settings — see docs.vicinae.com). Sharp, high-contrast.
+# ============================================================================
+[meta]
+name = "Monochrome Fury"
+description = "Pure black and white — white accent, zero color noise"
+variant = "dark"
+inherits = "vicinae-dark"
+
+[colors.core]
+accent = "#ffffff"
+accent_foreground = "#000000"
+background = "#000000"
+foreground = "#ffffff"
+secondary_background = "#111111"
+border = "#333333"
+
+[colors.main_window]
+border = "#444444"
+
+[colors.settings_window]
+border = "#444444"
+
+# accents stay grayscale so icons never fight the theme:
+[colors.accents]
+blue = "#dddddd"
+green = "#dddddd"
+magenta = "#dddddd"
+orange = "#dddddd"
+red = "#dddddd"
+yellow = "#dddddd"
+cyan = "#dddddd"
+purple = "#dddddd"
+
+[colors.shortcut]
+border = "#666666"
+
+[colors.text]
+default = "colors.core.foreground"
+muted = "#888888"
+danger = "#ffffff"
+success = "#ffffff"
+placeholder = "#555555"
+selection = { background = "#ffffff", foreground = "#000000" }
+
+[colors.text.links]
+default = "#ffffff"
+visited = "#aaaaaa"
+
+[colors.input]
+background = "#0a0a0a"
+border = "#444444"
+border_focus = "#ffffff"
+border_error = "#ffffff"
+
+[colors.button.primary]
+background = "#1a1a1a"
+foreground = "#ffffff"
+hover = { background = "#2a2a2a" }
+focus = { outline = "#ffffff" }
+
+[colors.list.item.hover]
+background = "#161616"
+foreground = "#ffffff"
+
+[colors.list.item.selection]
+background = "#ffffff"
+foreground = "#000000"
+secondary_background = "#e0e0e0"
+secondary_foreground = "#333333"
