@@ -108,6 +108,7 @@
     openssl                 # TLS toolkit (rand, certs)
     ethtool                 # Ethernet checker (also used by realtek-eee.nix)
     nmap                    # Network scanner
+    tcpdump                 # Packet capture (HOTS drop forensics: docs/HOTS-DISCONNECT-FIX.md)
     dig                     # DNS lookup
     whois                   # Domain info
     traceroute              # Network path tool
