@@ -39,6 +39,11 @@
     "net.netfilter.nf_conntrack_udp_timeout" = 60;
     "net.netfilter.nf_conntrack_udp_timeout_stream" = 180;
   };
+  # Preload conntrack so the sysctl above actually applies at boot.
+  # Without this, systemd-sysctl runs before nf_conntrack is loaded and the
+  # values are skipped ("No such file or directory", seen 2026-10-12) —
+  # leaving the 30s/120s defaults and the HotS draft-phase NAT expiry intact.
+  boot.kernelModules = [ "nf_conntrack" ];
   # ----------------------------------------------------------------------
 
   # ── SSH + packet capture ──

@@ -101,6 +101,24 @@ Requires rebuild (same command). This only covers the PC side — the router
 the router or add a static forward for UDP 1119-1120, 3724, 4000, 6113-6114.
 Revert: delete the block, rebuild.
 
+## Update 2026-10-12 — drop recurred, findings
+- Drop recurred on a fresh session running **UMU-Proton-10.0-4** (pin verified
+  live via ps). Proton version is ruled out as the cause/fix — the pin stays
+  as hygiene, but it is not the answer.
+- Live signature identical: TCP `:1119` ESTAB with empty queues, zero UDP to
+  the game server, 0% loss to router and to `137.221.106.15`, clean journal.
+  Silent UDP-session death, most likely during a quiet phase (draft/loading
+  sends almost no UDP, so NAT mappings expire and the match starts dead).
+- Fix 4 was NOT live despite being in the booted generation: systemd-sysctl
+  ran before `nf_conntrack` loaded and skipped both keys. Fixed with
+  `boot.kernelModules = [ "nf_conntrack" ]` in `modules/core/network.nix`.
+  Immediate (no reboot): `sudo systemctl restart systemd-sysctl`, then
+  `cat /proc/sys/net/netfilter/nf_conntrack_udp_timeout` must print 60.
+- Remaining primary suspect is the **router's** UDP timeout (local fix only
+  covers the PC side): raise UDP timeout to 180-300s, enable UPnP, or static
+  port-forward UDP 1119-1120, 3724, 4000, 6113-6114 to this PC
+  (`192.168.1.135`). Current match still needs a relaunch regardless.
+
 ## Verify the next drop (do before changing anything else)
 ```bash
 date -u; ss -tnp | grep 1119; ss -una | head -30
