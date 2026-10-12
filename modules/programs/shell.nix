@@ -246,9 +246,8 @@
       gpop = "git stash pop";                # bring back last stash
 
       # ---------- System information ----------
-      # NOTE: `ff` is a function (interactiveShellInit below), not an alias:
-      # it stacks the logo on top when the terminal is too narrow for
-      # side-by-side, instead of overlapping image + text.
+      # Show system, CPU, GPU, memory, and kernel information.
+      ff = "fastfetch";
       # Open an interactive resource monitor.
       bt = "btop";
       # Open the dank interactive resource monitor.
@@ -274,17 +273,18 @@
     interactiveShellInit = ''
       eval "$(zoxide init zsh)"
       eval "$(fzf --zsh)"
-      # Responsive fastfetch: side-by-side needs ~100 cols (38 for the
-      # image + text starting at col ~72). Below that, stack the logo
-      # on top so image and text never overlap. Passes args through.
-      ff() {
-        local cols="''${COLUMNS:-$(tput cols 2>/dev/null || echo 120)}"
-        if [ "$cols" -lt 100 ]; then
-          command fastfetch --logo-position top --logo-height 10 "$@"
-        else
-          command fastfetch "$@"
-        fi
-      }
+      # Narrow-terminal fastfetch fix (unused — `ff` alias above is enough
+      # at full width). If side-by-side image + text ever overlap in a
+      # small pane, uncomment the function below: under 100 cols it stacks
+      # the logo on top instead. Passes args through.
+      # ff() {
+      #   local cols="''${COLUMNS:-$(tput cols 2>/dev/null || echo 120)}"
+      #   if [ "$cols" -lt 100 ]; then
+      #     command fastfetch --logo-position top --logo-height 10 "$@"
+      #   else
+      #     command fastfetch "$@"
+      #   fi
+      # }
     '';
   };
 
