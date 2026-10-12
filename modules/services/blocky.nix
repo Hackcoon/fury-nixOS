@@ -215,20 +215,27 @@
         # ];
         # clientGroupsBlock.default = [ "ads" "nsfw" ]; # remove "nsfw" to disable without commenting URLs
         # Allowlist — for sites Blocky blocks that should load. Takes
-        # precedence over blackLists. Add bare domain + wildcard to cover subs.
-        # Example: site.example.com broken -> add both lines below, rebuild.
+        # precedence over blackLists.
+        # 0.29 GOTCHA (bit us 2026-10-12): entries here are SOURCES (URLs or
+        # file paths), not bare domains — a bare "example.com" is read as
+        # file://example.com and fails the whole allowlist group init. Real
+        # domains live in /etc/blocky/allowlist.txt below; add one per line.
         # NOTE: this Blocky version uses whiteLists (newer uses allowLists).
         whiteLists.ads = [
-          # HOTS disconnect fix (2026-10-10): Battle.net spams these every few
-          # seconds in-game; answering 0.0.0.0 forces client-side retry storms.
-          # Core game/login domains were never blocked — this just quiets noise.
-          # Revert: delete the three lines below and rebuild.
-          "telemetry-in.battle.net"
-          "rum.battle.net"
-          # "www.googletagmanager.com"
+          "/etc/blocky/allowlist.txt"
         ];
         clientGroupsBlock.default = [ "ads" ];
       };
+      # ----------------------------------------------------------------------
+
+      # ── Allowlist file: bare Battle.net telemetry domains ──
+      # HOTS 2026-10-10: client spams these every few seconds in-game;
+      # answering 0.0.0.0 forces retry storms. Core game/login domains were
+      # never blocked — this just quiets noise. Revert: empty this file.
+      environment.etc."blocky/allowlist.txt".text = ''
+        telemetry-in.battle.net
+        rum.battle.net
+      '';
       # ----------------------------------------------------------------------
 
       # ── Caching: 5–30 min window + prefetch ──
