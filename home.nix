@@ -134,6 +134,10 @@
       enable_audio_bell = false;        # no beeps
       copy_on_select = "clipboard";     # selection → clipboard
       strip_trailing_space = "smart";  # clean copy/paste
+      # Nerd Font icons (fastfetch 󰁔 + key icons) fall back to mismatched
+      # fonts under Google Sans Code → arrows misalign / vanish. Pin the
+      # private-use ranges to a mono Nerd Font so every glyph is same width.
+      symbol_map = "U+E000-U+F8FF,U+F0000-U+F1FFF JetBrainsMono Nerd Font Mono";
     };
 
     # shell integration gives cwd-following + jump marks in zsh
