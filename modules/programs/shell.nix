@@ -248,6 +248,18 @@
       # ---------- System information ----------
       # Show system, CPU, GPU, memory, and kernel information.
       ff = "fastfetch";
+      # Narrow-terminal fastfetch fix (inactive). If side-by-side image +
+      # text ever overlap in a small pane, drop the alias above and define
+      # this function in interactiveShellInit below: under 100 cols it
+      # stacks the logo on top instead. Passes args through.
+      # ff() {
+      #   local cols="${COLUMNS:-$(tput cols 2>/dev/null || echo 120)}"
+      #   if [ "$cols" -lt 100 ]; then
+      #     command fastfetch --logo-position top --logo-height 10 "$@"
+      #   else
+      #     command fastfetch "$@"
+      #   fi
+      # }
       # Open an interactive resource monitor.
       bt = "btop";
       # Open the dank interactive resource monitor.
@@ -273,18 +285,6 @@
     interactiveShellInit = ''
       eval "$(zoxide init zsh)"
       eval "$(fzf --zsh)"
-      # Narrow-terminal fastfetch fix (unused — `ff` alias above is enough
-      # at full width). If side-by-side image + text ever overlap in a
-      # small pane, uncomment the function below: under 100 cols it stacks
-      # the logo on top instead. Passes args through.
-      # ff() {
-      #   local cols="''${COLUMNS:-$(tput cols 2>/dev/null || echo 120)}"
-      #   if [ "$cols" -lt 100 ]; then
-      #     command fastfetch --logo-position top --logo-height 10 "$@"
-      #   else
-      #     command fastfetch "$@"
-      #   fi
-      # }
     '';
   };
 
