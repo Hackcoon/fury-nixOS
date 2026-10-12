@@ -228,16 +228,6 @@
       };
       # ----------------------------------------------------------------------
 
-      # ── Allowlist file: bare Battle.net telemetry domains ──
-      # HOTS 2026-10-10: client spams these every few seconds in-game;
-      # answering 0.0.0.0 forces retry storms. Core game/login domains were
-      # never blocked — this just quiets noise. Revert: empty this file.
-      environment.etc."blocky/allowlist.txt".text = ''
-        telemetry-in.battle.net
-        rum.battle.net
-      '';
-      # ----------------------------------------------------------------------
-
       # ── Caching: 5–30 min window + prefetch ──
       # Short enough that blocklist updates and DNS changes propagate fast,
       # prefetching refreshes popular entries before they expire (no lookup lag).
@@ -255,5 +245,19 @@
   # so resolved -> Blocky stays plain localhost (DoT off here).
   networking.nameservers = [ "127.0.0.1" ];
   services.resolved.settings.Resolve.DNSOverTLS = "no";
+  # ----------------------------------------------------------------------
+
+  # ── Allowlist file: bare Battle.net telemetry domains ──
+  # NOTE: this MUST live at top level (environment.etc), NOT inside
+  # services.blocky.settings — nested there it renders as an `environment:`
+  # key in blocky's config.yaml and 0.29 rejects the whole config
+  # (broke `nixos-rebuild build` 2026-10-12).
+  # HOTS 2026-10-10: client spams these every few seconds in-game;
+  # answering 0.0.0.0 forces retry storms. Core game/login domains were
+  # never blocked — this just quiets noise. Revert: empty this file.
+  environment.etc."blocky/allowlist.txt".text = ''
+    telemetry-in.battle.net
+    rum.battle.net
+  '';
   # ----------------------------------------------------------------------
 }
