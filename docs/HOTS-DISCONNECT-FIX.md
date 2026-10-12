@@ -150,6 +150,30 @@ Ranked Linux-specific suspects:
   server goes quiet → client stall (hypothesis 1); if the client keeps
   sending while the   server stops answering → network/server path.
 
+## Update 2026-10-12 — Discord drops too: system-wide, not HotS-specific
+Discord voice also drops randomly. Browser/TCP never notices. Link has zero
+flaps since boot, NetworkManager is up since boot, DHCP lease is 24h (renewal
+not the cause), Blocky has zero restarts. Verdict: brief stalls that only
+kill real-time UDP sessions. The 01:04 rebuild did NOT flap the link (no NM
+restart, kernel log clean), so a drop right after a rebuild is the real
+pattern, not rebuild fallout.
+- Next Discord drop: note the exact time and whether HotS/other UDP died at
+  the same instant — simultaneity proves a shared stall vs per-app causes.
+- Suspects left standing: micro-outages upstream of the router, or bursts
+  (upload saturation) the router's buffer turns into UDP loss. A timestamped
+  ping log during the next session separates local from upstream:
+  `ping -i 5 -D 192.168.1.1 > /tmp/ping-router.log &`
+  `ping -i 5 -D 8.8.8.8 > /tmp/ping-wan.log &`
+  If router pings stay clean while WAN pings gap at the drop moment, it's
+  upstream of the LAN.
+
+## Update 2026-10-12 — allowlist entries were file paths (fixed)
+`whiteLists.ads` takes SOURCES, not domains: bare
+`telemetry-in.battle.net` was read as `file://...` and failed the whole
+allowlist group init (log spam, no adblock-allow effect). Fixed with a real
+file: `/etc/blocky/allowlist.txt` via `environment.etc`, referenced from
+`whiteLists.ads`. Needs a rebuild to take effect.
+
 ## Verify the next drop (do before changing anything else)
 ```bash
 date -u; ss -tnp | grep 1119; ss -una | head -30
