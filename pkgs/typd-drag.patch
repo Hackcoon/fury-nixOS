@@ -1,0 +1,25 @@
+--- a/src/virtual_kbd.rs
++++ b/src/virtual_kbd.rs
+@@ -505,13 +505,17 @@
+                         app.margin_y = new_my;
+                         app.pending_margin = Some((app.margin_x, app.margin_y));
+ 
+-                        // Sidebar follows the main keyboard
+-                        let sb_width = (layout::SIDEBAR_WIDTH * app.sidebar_anim_progress as f64)
+-                            .max(1.0) as u32;
++                        // Sidebar follows the main keyboard (margins only:
++                        // its size doesn't change while dragging, and
++                        // re-sending set_size per motion forces extra
++                        // compositor re-configures = drag lag).
+                         app.pending_sidebar_margin = Some((app.sidebar_margin_x(), app.margin_y));
+-                        app.pending_sidebar_size = Some((sb_width, app.height));
+ 
+-                        app.draw(qh);
++                        // Move without full redraw: the key layout is
++                        // unchanged while dragging, so commit geometry only.
++                        // The compositor repositions the existing buffer.
++                        app.commit_pending_geometry(false);
++                        app.commit_pending_geometry(true);
+                     }
+                 } else {
+                     app.update_hover(qh);

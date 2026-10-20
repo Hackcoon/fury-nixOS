@@ -67,6 +67,7 @@ hl.bind("SUPER + SHIFT + A", hl.dsp.exec_cmd("/home/fury/.config/hypr/scripts/An
 hl.bind("SUPER + ALT + A", hl.dsp.exec_cmd("/home/fury/.config/hypr/scripts/AnimationsPreset.sh")) -- animation STYLE presets (ported Hyprland-Dots)
 hl.bind("SUPER + SHIFT + O", hl.dsp.exec_cmd("bash -c 'systemctl --user restart xdg-desktop-portal xdg-desktop-portal-wlr && notify-send \"Portals\" \"ScreenCast restarted — retry sharing\"'")) -- restart portals screenshare fix (Mango chord)
 hl.bind("SUPER + ALT + C", hl.dsp.exec_cmd("qalculate-qt")) -- calculator Qalculate (floating rule in hyprland.lua)
+hl.bind("SUPER + SHIFT + K", hl.dsp.exec_cmd("/home/fury/.config/hypr/scripts/ToggleKeyboard.sh")) -- on-screen keyboard wvkbd toggle (mouse-clickable, no physical kb needed)
 hl.bind("SUPER + comma", hl.dsp.exec_cmd("dms ipc call settings focusOrToggle")) -- DMS settings (Mango chord)
 hl.bind("SHIFT_L + ALT_L", hl.dsp.exec_cmd("/home/fury/.config/hypr/scripts/Tak0-Per-Window-Switch.sh"), { ignore_mods = true }) -- per-window layout switch
 
@@ -246,3 +247,61 @@ hl.bind("SUPER + ALT + SHIFT + comma", hl.dsp.workspace.move({ monitor = "left" 
 hl.bind("SUPER + ALT + SHIFT + period", hl.dsp.workspace.move({ monitor = "right" })) -- send workspace to next monitor (Mango tagmon)
 -- Monitors: single-monitor setup, Mango binds inert here too — skipped.
 -- Shell switching + Tide stay retired (vault choice).
+
+-- ═════════════════ GAME MODE / passthrough ═════════════════
+-- NOTE: this block MUST stay after `local function hop_used` (workspace
+-- section above). Lua resolves hop_used at definition scope — placed earlier,
+-- the submap callbacks capture a nil global and error on press.
+-- ALT+grave kills ALL global binds (AoE gets ALT+1-6 untouched); same key restores.
+-- grave chosen because AoE uses none of it; ALT+6 stays a game key.
+-- Submap must NOT be named "passthrough" (reserved dispatcher).
+local SUBMAP_MANUAL_PT = "keybinds_disabled"
+hl.bind(
+    "ALT + grave",
+    function()
+        hl.notification.create({ text = "Game Mode ON - binds off, ALT+` to exit", timeout = 3000 })
+        hl.dispatch(hl.dsp.submap(SUBMAP_MANUAL_PT))
+    end,
+    { description = "Game Mode: disable all keybinds (AoE parity)", locked = true }
+)
+hl.define_submap(SUBMAP_MANUAL_PT, function()
+    hl.bind(
+        "ALT + grave",
+        function()
+            hl.notification.create({ text = "Game Mode OFF - binds restored", timeout = 2000 })
+            hl.dispatch(hl.dsp.submap("reset"))
+        end,
+        { description = "Game Mode: restore keybinds", locked = true }
+    )
+    -- Exceptions that stay live in game mode:
+    hl.bind("SUPER + Tab", function() hop_used(1) end,
+        { description = "Game Mode: next used workspace", locked = true })
+    hl.bind("SUPER + SHIFT + Tab", function() hop_used(-1) end,
+        { description = "Game Mode: prev used workspace", locked = true })
+    -- View tags directly (mirrors global SUPER+1-9):
+    hl.bind("SUPER + 1", hl.dsp.focus({ workspace = "1" }), { description = "Game Mode: view tag 1", locked = true })
+    hl.bind("SUPER + 2", hl.dsp.focus({ workspace = "2" }), { description = "Game Mode: view tag 2", locked = true })
+    hl.bind("SUPER + 3", hl.dsp.focus({ workspace = "3" }), { description = "Game Mode: view tag 3", locked = true })
+    hl.bind("SUPER + 4", hl.dsp.focus({ workspace = "4" }), { description = "Game Mode: view tag 4", locked = true })
+    hl.bind("SUPER + 5", hl.dsp.focus({ workspace = "5" }), { description = "Game Mode: view tag 5", locked = true })
+    hl.bind("SUPER + 6", hl.dsp.focus({ workspace = "6" }), { description = "Game Mode: view tag 6", locked = true })
+    hl.bind("SUPER + 7", hl.dsp.focus({ workspace = "7" }), { description = "Game Mode: view tag 7", locked = true })
+    hl.bind("SUPER + 8", hl.dsp.focus({ workspace = "8" }), { description = "Game Mode: view tag 8", locked = true })
+    hl.bind("SUPER + 9", hl.dsp.focus({ workspace = "9" }), { description = "Game Mode: view tag 9", locked = true })
+    -- Special / scratch workspaces (mirrors global SUPER+U / SUPER+J family):
+    hl.bind("SUPER + U", hl.dsp.workspace.toggle_special(), { description = "Game Mode: special overlay", locked = true })
+    hl.bind("SUPER + SHIFT + U", hl.dsp.window.move({ workspace = "special" }), { description = "Game Mode: send window to special", locked = true })
+    hl.bind("SUPER + J", hl.dsp.workspace.toggle_special("scratchpad"), { description = "Game Mode: scratchpad overlay", locked = true })
+    hl.bind("SUPER + SHIFT + J", hl.dsp.window.move({ workspace = "special:scratchpad" }), { description = "Game Mode: send to scratchpad", locked = true })
+    hl.bind("SUPER + CTRL + J", hl.dsp.workspace.toggle_special("scratchpad"), { description = "Game Mode: re-open scratchpad", locked = true })
+    -- Throw the game window to a tag and follow it:
+    hl.bind("SUPER + SHIFT + 1", hl.dsp.window.move({ workspace = "1", follow = true }), { description = "Game Mode: send to tag 1", locked = true })
+    hl.bind("SUPER + SHIFT + 2", hl.dsp.window.move({ workspace = "2", follow = true }), { description = "Game Mode: send to tag 2", locked = true })
+    hl.bind("SUPER + SHIFT + 3", hl.dsp.window.move({ workspace = "3", follow = true }), { description = "Game Mode: send to tag 3", locked = true })
+    hl.bind("SUPER + SHIFT + 4", hl.dsp.window.move({ workspace = "4", follow = true }), { description = "Game Mode: send to tag 4", locked = true })
+    hl.bind("SUPER + SHIFT + 5", hl.dsp.window.move({ workspace = "5", follow = true }), { description = "Game Mode: send to tag 5", locked = true })
+    hl.bind("SUPER + SHIFT + 6", hl.dsp.window.move({ workspace = "6", follow = true }), { description = "Game Mode: send to tag 6", locked = true })
+    hl.bind("SUPER + SHIFT + 7", hl.dsp.window.move({ workspace = "7", follow = true }), { description = "Game Mode: send to tag 7", locked = true })
+    hl.bind("SUPER + SHIFT + 8", hl.dsp.window.move({ workspace = "8", follow = true }), { description = "Game Mode: send to tag 8", locked = true })
+    hl.bind("SUPER + SHIFT + 9", hl.dsp.window.move({ workspace = "9", follow = true }), { description = "Game Mode: send to tag 9", locked = true })
+end)

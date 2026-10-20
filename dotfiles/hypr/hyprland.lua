@@ -206,6 +206,13 @@ hl.window_rule({ match = { class = "^(nwg-look|nm-connection-editor|blueman-mana
 hl.window_rule({ match = { title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture|PiP)(.*)$" }, float = true, pin = true, size = { "monitor_w*0.25", "monitor_h*0.25" }, move = { "monitor_w-(monitor_w*0.25)-20", "monitor_h-(monitor_h*0.25)-20" }, focus_on_activate = false, no_initial_focus = true, suppress_event = "activate" })
 hl.window_rule({ match = { class = "^(xdg-desktop-portal-gtk)$" }, float = true })
 hl.window_rule({ match = { initial_class = "^(pavucontrol)$" }, float = true })
+-- Onboard on-screen keyboard — RETIRED 2026-10-13 (typd won): XWayland
+-- floating OSK can't work on Hyprland — clicking it steals keyboard focus
+-- (Hyprland ignores WM_HINTS input=False) and the `no_focus` rule kills
+-- pointer clicks too. typd (layer-shell) has neither problem.
+-- To retry Onboard anyway: uncomment the next line (docked mode eats clicks;
+-- undock via `gsettings set org.onboard.window docking-enabled false`).
+-- hl.window_rule({ match = { class = "^(Onboard)$" }, float = true, pin = true })
 
 -- ═══════════ AUTOSTART (tide-island OPTIONAL — see NixOS module) ═══════════
 -- Tide Island starts ONLY if installed. When you disable its NixOS module,

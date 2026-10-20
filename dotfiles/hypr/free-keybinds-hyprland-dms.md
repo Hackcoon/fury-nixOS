@@ -1,4 +1,4 @@
-# Free keybinds — Hyprland (fury) — generated 2026-10-11 from `dms/binds.lua` (165 binds)
+# Free keybinds — Hyprland (fury) — generated 2026-10-11 from `dms/binds.lua` (193 binds)
 
 > Regenerate: `rg -o 'hl\.bind\("([^"]+)"' dms/binds.lua | sort | uniq -c`.
 > Source of truth: `dms/binds.lua` (active, DMS cheatsheet reads it) + `binds.lua` (retired archive).
@@ -43,7 +43,7 @@ FREE: `B D E F G H I J K M N Q R T U V W X Y Z, Return, Tab, 0-9, semicolon (;),
 
 - `F1-F12`: none bound — all free.
 - `Print`: `Print / SHIFT+Print / ALT+Print` taken (DMS screenshot). `SUPER+Print`, `SUPER+CTRL+Print` etc retired — free.
-- `ALT+Tab` taken (window cycle). `ALT+1/2/3/4/5` taken (nmtui / blueman-manager / pavucontrol / journal explorer / toolbox). Bare `ALT+letter` otherwise free but risky (apps use ALT). `ALT+SPACE` free (vicinae alt option).
+- `ALT+Tab` taken (window cycle). `ALT+1/2/3/4/5` taken (nmtui / blueman-manager / pavucontrol / journal explorer / toolbox). `ALT+grave` taken (game-mode submap toggle; `ALT+6` left free for AoE). Inside game mode these stay alive: `SUPER+Tab`/`SHIFT+Tab`, `SUPER+1-9`, `SUPER+SHIFT+1-9`, `SUPER+U`/`SHIFT+U`, `SUPER+J`/`SHIFT+J`/`CTRL+J`. Bare `ALT+letter` otherwise free but risky (apps use ALT). `ALT+SPACE` free (vicinae alt option).
 - `CTRL+ALT+Delete` (exit), `CTRL+ALT+P` (powermenu) taken.
 - `XF86` media/volume/brightness keys taken (Volume.sh / MediaCtrl.sh). `XF86MonBrightness*` free in Hypr (mango-only).
 - `SUPER+wheel` (hop used workspaces), `SUPER+LMB/RMB` (drag/resize), `SUPER+SHIFT+LMB` (float) taken.

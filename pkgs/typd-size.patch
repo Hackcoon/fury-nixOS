@@ -1,0 +1,13 @@
+--- a/src/virtual_kbd.rs
++++ b/src/virtual_kbd.rs
+@@ -33,8 +33,8 @@
+ use crate::layout::{self, ComputedKey, KeyAction};
+ use crate::renderer;
+ 
+-pub const SURFACE_WIDTH: u32 = 1280;
+-pub const SURFACE_HEIGHT: u32 = 480;
++pub const SURFACE_WIDTH: u32 = 960;
++pub const SURFACE_HEIGHT: u32 = 340;
+ pub const DRAG_BAR_HEIGHT: f64 = 32.0; // Slightly taller for better touch/click
+ const MIN_WIDTH: f64 = 900.0;
+ const MIN_HEIGHT: f64 = 300.0;

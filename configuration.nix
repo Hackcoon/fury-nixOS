@@ -26,6 +26,8 @@ let
   tolaria = pkgs.callPackage ./pkgs/tolaria.nix { };
   recordly = pkgs.callPackage ./pkgs/recordly.nix { };
   openwolf = pkgs.callPackage ./pkgs/openwolf.nix { };
+  photocraft = pkgs.callPackage ./pkgs/photocraft.nix { };
+  filmcraft = pkgs.callPackage ./pkgs/filmcraft.nix { };
 in
 {
   imports = [
@@ -129,6 +131,10 @@ in
     recordly # OPTIONAL — drop for minimal
     # coding-agent memory CLI (OpenWolf npm tarball, node-wrapped — see pkgs/openwolf.nix header for updates)
     openwolf # OPTIONAL — drop for minimal
+    # image editor (PhotoCraft official tarball, patchelf+wrapped — see pkgs/photocraft.nix header for updates)
+    photocraft # OPTIONAL — drop for minimal
+    # video editor (FilmCraft official tarball, patchelf+wrapped — see pkgs/filmcraft.nix header for updates)
+    filmcraft # OPTIONAL — drop for minimal
     # CapCut replacement, native Rust build from upstream flake (bump tag in flake.nix to update)
     # concatPkg # HEAVY — Rust build from source, drop for minimal/fastest build
   ];
