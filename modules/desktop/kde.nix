@@ -1,36 +1,37 @@
-# KDE Plasma 6 + display manager + power profiles.
+# ============================================================================
+# kde.nix — KDE Plasma 6 + SDDM + XWayland base.
 #
-# Display manager: when the Dank greetd greeter is enabled
-# (mango-dms.nix → programs.dms-greeter), greetd owns the seat and
-# SDDM MUST be off — NixOS errors if two display managers claim the
-# same seat. Plasma sessions remain selectable from the greeter's
-# session list (greetd reads wayland-sessions/desktop entries).
+# Display-manager handoff: when the Dank greetd greeter is enabled
+# (mango-dms.nix → programs.dms-greeter), greetd owns the seat and SDDM MUST
+# be off — NixOS errors if two display managers claim the same seat. Plasma
+# sessions stay selectable from the greeter's session list (greetd reads
+# wayland-sessions/desktop entries). HEAVY: full DE — keep only if KDE is main.
+# ============================================================================
 { config, pkgs, lib, ... }:
 
 {
-  # X11 windowing base — needed by XWayland apps and the XFCE session
+  # ── X11 base + keyboard ──
+  # xserver.enable underpins XWayland apps and the XFCE session (not X11
+  # sessions themselves — everything runs Wayland here).
   services.xserver.enable = true;
-
-  # X11 keyboard layout
   services.xserver.xkb = {
     layout = "us";
     variant = "";
   };
+  # ----------------------------------------------------------------------
 
-  # SDDM display manager — Wayland greeter so Qt6 themes render
-  # correctly (required by the qylock themes).
-  #
-  # Automatically disabled when the Dank greeter (greetd) takes over
-  # the seat — see mango-dms.nix programs.dms-greeter.
+  # ── SDDM (Wayland greeter) — auto-yields to Dank greeter ──
+  # Wayland greeter so Qt6 themes render correctly (required by qylock themes).
+  # The `!dms-greeter` guard disables SDDM the moment greetd takes the seat.
   services.displayManager.sddm.enable = !config.programs.dms-greeter.enable;
   services.displayManager.sddm.wayland.enable = !config.programs.dms-greeter.enable;
+  # ----------------------------------------------------------------------
 
-  # Plasma 6 desktop
+  # ── Plasma 6 + XWayland + power profiles ──
+  # power-profiles-daemon is KDE's balanced profile — laptop.nix force-disables
+  # it when TLP takes over (governor fight), so no conflict on the laptop.
   services.desktopManager.plasma6.enable = true;
-
-  # KDE's balanced power profile
   services.power-profiles-daemon.enable = true;
-
-  # XWayland support for legacy apps under Wayland
-  programs.xwayland.enable = true;
+  programs.xwayland.enable = true; # legacy X11 apps under Wayland
+  # ----------------------------------------------------------------------
 }

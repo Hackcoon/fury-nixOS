@@ -1,0 +1,126 @@
+CORE
+SUPER + Return          | Terminal (kitty)
+SUPER SHIFT + Return     | Dropdown terminal
+SUPER + Q                | Close window
+SUPER SHIFT + Q          | Force-kill window process
+SUPER + E                | File manager (thunar)
+SUPER + B                | Browser homepage
+SUPER + D                | Vicinae launcher (black/white)
+SUPER SHIFT + D          | rofi launcher (drun/run/window/files)
+SUPER + H                | This help
+SUPER SHIFT + T          | Global theme switcher (wallust)
+SUPER SHIFT + E          | Quick settings menu
+SUPER ALT + R            | Refresh bars & menus
+CTRL ALT + Delete        | Exit Hyprland
+CTRL ALT + P             | Power menu (fury-bar popup; wlogout inside)
+CTRL ALT + L             | Lock screen (hyprlock)
+SUPER SHIFT + N          | Notification panel (fury-bar)
+
+WINDOWS
+SUPER SHIFT + F          | Fullscreen toggle
+SUPER CTRL + F           | Maximize
+SUPER + SPACE            | Toggle floating
+SUPER ALT + SPACE        | Float all tiled windows
+SUPER + G                | Toggle window group
+SUPER SHIFT + I          | Toggle split direction
+SUPER ALT + L            | Toggle master/dwindle
+SUPER CTRL + O           | Toggle window opacity
+SUPER + P                | Pseudo-tile
+
+GROUPS
+SUPER + Tab              | Next window in group
+SUPER SHIFT + Tab        | Previous window in group
+SUPER CTRL + Tab         | Cycle group index
+SUPER CTRL + K           | Move into group (left)
+SUPER CTRL + L           | Move into group (right)
+SUPER CTRL + H           | Move out of group
+ALT + Tab                | Cycle windows
+
+LAYOUT (master)
+SUPER + I                | Add master
+SUPER CTRL + D           | Remove master
+SUPER CTRL + Return      | Swap with master
+SUPER + M                | Split ratio 0.3
+
+WORKSPACES
+SUPER + 1..9, 0          | Workspace 1..10
+SUPER SHIFT + 1..0       | Move window there (follow)
+SUPER CTRL + 1..0        | Move window there (silent)
+SUPER + Tab              | Next workspace (monitor)
+SUPER SHIFT + Tab        | Previous workspace
+SUPER + wheel/period/comma | Cycle workspaces
+SUPER SHIFT + U          | To scratchpad (special:magic)
+SUPER + U                | Toggle scratchpad
+SUPER SHIFT + [ / ]      | Move window to previous/next workspace
+SUPER CTRL + F9..F12     | Move workspace to monitor L/R/U/D
+ALT_L+SHIFT_L / SHIFT_L+ALT_L | Keyboard layout switch
+
+FOCUS / MOVE / RESIZE
+SUPER + arrows           | Move focus
+SUPER CTRL + arrows       | Move window
+SUPER ALT + arrows        | Swap window with neighbor
+SUPER SHIFT + arrows      | Resize ±50px
+SUPER + LMB drag         | Drag window
+SUPER + RMB drag         | Resize window
+
+SCREENSHOTS
+Print                    | Full screenshot
+SUPER + Print            | Full screenshot
+SUPER SHIFT + Print      | Area screenshot
+SUPER CTRL + Print       | Full screenshot in 5s
+SUPER CTRL SHIFT + Print | Full screenshot in 10s
+ALT + Print              | Active window
+SUPER SHIFT + S          | Area → satty annotate
+SUPER + X                | Region → text (OCR extract, clipboard)
+SUPER + T                | Speak clipboard (Kokoro TTS)
+SUPER + M                | STT record toggle (Parakeet)
+
+TOOLS
+SUPER + S                | Web search (Brave)
+SUPER CTRL + S           | Window switcher (rofi)
+SUPER ALT + V            | Clipboard manager
+SUPER ALT + E            | Emoji picker
+SUPER ALT + C            | Calculator
+SUPER SHIFT + M          | RofiBeats music streams
+SUPER SHIFT + A          | Animations menu
+SUPER SHIFT + O          | Zsh theme switcher
+SUPER SHIFT + K          | Searchable keybinds (this)
+SUPER CTRL + R           | Rofi theme picker
+SUPER + N                | Night light toggle
+SUPER ALT + O            | Toggle blur
+SUPER SHIFT + G          | GameMode toggle
+
+WALLPAPER & BARS
+SUPER + W                | Wallpaper select
+SUPER SHIFT + W          | Wallpaper effects
+CTRL ALT + W             | Random wallpaper
+SUPER CTRL + B           | Waybar style cycler
+SUPER ALT + B            | Waybar layout cycler
+SUPER CTRL ALT + B       | Waybar on/off
+SUPER CTRL ALT + T       | SHELL SWITCH: Tide ↔ fury-bar
+
+MEDIA KEYS (work locked)
+XF86AudioRaise/LowerVolume | Volume ±5%
+ALT + volume keys        | Precise volume ±2%
+XF86AudioMute            | Mute toggle
+XF86AudioMicMute         | Mic mute toggle
+XF86AudioPlay / Pause    | Play/pause
+XF86AudioNext/Prev/Stop  | Track controls
+XF86Sleep                | Suspend
+XF86RFKill               | Airplane mode
+
+ZOOM
+SUPER ALT + wheel        | Zoom in/out
+SUPER ALT + mouse_down/up | Zoom in/out
+
+TIDE ISLAND (works when Tide is the shell via SUPER CTRL ALT + T)
+SUPER SHIFT + A      | Tide workspace overview
+SUPER ALT + M        | Tide music player
+SUPER ALT + P        | Tide power menu
+SUPER ALT + N        | Tide notification history
+SUPER ALT + F        | Tide wallpaper library
+SUPER ALT + I        | Tide file shelf
+SUPER ALT + G        | Tide control center
+SUPER CTRL ALT + L   | Tide clock view
+SUPER CTRL ALT + M   | Tide timer
+SUPER CTRL ALT + F   | Tide app launcher

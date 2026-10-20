@@ -1,0 +1,5 @@
+#!/bin/sh
+# start vicinae server once (both Hyprland & KDE autostart call this)
+if ! pgrep -x vicinae-server >/dev/null 2>&1; then
+  exec vicinae server
+fi

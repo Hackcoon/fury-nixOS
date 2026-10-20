@@ -1,0 +1,52 @@
+--- a/src/renderer.rs
++++ b/src/renderer.rs
+@@ -34,8 +34,8 @@
+ 
+     // 2. Rounded background with restrained depth
+     let grad = cairo::LinearGradient::new(0.0, 0.0, 0.0, h);
+-    grad.add_color_stop_rgba(0.0, 0.12, 0.13, 0.15, 0.98);
+-    grad.add_color_stop_rgba(1.0, 0.055, 0.058, 0.066, 0.98);
++    grad.add_color_stop_rgba(0.0, 0.0, 0.0, 0.0, 1.0);
++    grad.add_color_stop_rgba(1.0, 0.0, 0.0, 0.0, 1.0);
+ 
+     rounded_path(cr, 0.0, 0.0, w, h, r);
+     cr.set_source(&grad).unwrap();
+@@ -47,7 +47,7 @@
+     cr.stroke().unwrap();
+ 
+     // Subtle inner highlight
+-    cr.set_source_rgba(1.0, 1.0, 1.0, 0.05);
++    cr.set_source_rgba(1.0, 1.0, 1.0, 0.0);
+     cr.set_line_width(1.0);
+     rounded_path(cr, 2.5, 2.5, w - 5.0, h - 5.0, r - 2.5);
+     cr.stroke().unwrap();
+@@ -55,7 +55,7 @@
+     cr.save().unwrap();
+     rounded_path(cr, 0.0, 0.0, w, h, r);
+     cr.clip();
+-    cr.set_source_rgba(1.0, 1.0, 1.0, 0.045);
++    cr.set_source_rgba(1.0, 1.0, 1.0, 0.0);
+     cr.rectangle(0.0, 0.0, w, crate::layout::DRAG_BAR_HEIGHT);
+     cr.fill().unwrap();
+ 
+@@ -154,16 +154,16 @@
+         } else if is_hovered {
+             cr.set_source_rgba(1.0, 1.0, 1.0, 0.16);
+         } else if is_special {
+-            cr.set_source_rgba(1.0, 1.0, 1.0, 0.105);
++            cr.set_source_rgba(0.0, 0.0, 0.0, 1.0);
+         } else {
+-            cr.set_source_rgba(1.0, 1.0, 1.0, 0.07);
++            cr.set_source_rgba(0.0, 0.0, 0.0, 1.0);
+         }
+         let key_radius = (key.h * 0.18).clamp(6.0, 10.0);
+         rounded_path(cr, key.x, key.y, key.w, key.h, key_radius);
+         cr.fill().unwrap();
+ 
+-        // Key border (subtle)
+-        cr.set_source_rgba(1.0, 1.0, 1.0, 0.05);
++        // Key border (defines the grid on pure-black keys)
++        cr.set_source_rgba(1.0, 1.0, 1.0, 0.14);
+         cr.set_line_width(1.0);
+         rounded_path(
+             cr,
