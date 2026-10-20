@@ -255,29 +255,20 @@ hl.bind("SUPER + ALT + SHIFT + period", hl.dsp.workspace.move({ monitor = "right
 -- ALT+grave kills ALL global binds (AoE gets ALT+1-6 untouched); same key restores.
 -- grave chosen because AoE uses none of it; ALT+6 stays a game key.
 -- Submap must NOT be named "passthrough" (reserved dispatcher).
-local SUBMAP_MANUAL_PT = "keybinds_disabled"
-hl.bind(
-    "ALT + grave",
-    function()
-        hl.notification.create({ text = "Game Mode ON - binds off, ALT+` to exit", timeout = 3000 })
-        hl.dispatch(hl.dsp.submap(SUBMAP_MANUAL_PT))
-    end,
-    { description = "Game Mode: disable all keybinds (AoE parity)", locked = true }
-)
-hl.define_submap(SUBMAP_MANUAL_PT, function()
-    hl.bind(
-        "ALT + grave",
-        function()
-            hl.notification.create({ text = "Game Mode OFF - binds restored", timeout = 2000 })
-            hl.dispatch(hl.dsp.submap("reset"))
-        end,
-        { description = "Game Mode: restore keybinds", locked = true }
-    )
+-- NOTE: enter/exit go through GameModeBinds.sh via exec_cmd (not a Lua function
+-- callback) on purpose — DMS's keybinds provider only renders binds whose
+-- action string it can read, so function callbacks are invisible in SUPER+H.
+-- Keep these calls SINGLE-LINE too: the parser is line-based.
+-- hyprctl dispatch is Lua-shimmed here, so the script uses `hyprctl eval`.
+hl.define_submap("keybinds_disabled", function()
+    hl.bind("ALT + grave", hl.dsp.exec_cmd("/home/fury/.config/hypr/scripts/GameModeBinds.sh off"), { description = "Game Mode: restore keybinds", locked = true })
     -- Exceptions that stay live in game mode:
     hl.bind("SUPER + Tab", function() hop_used(1) end,
         { description = "Game Mode: next used workspace", locked = true })
     hl.bind("SUPER + SHIFT + Tab", function() hop_used(-1) end,
         { description = "Game Mode: prev used workspace", locked = true })
+    -- Performance mode toggle (animations/blur/DND) stays live:
+    hl.bind("SUPER + SHIFT + G", hl.dsp.exec_cmd("/home/fury/.config/hypr/scripts/GameMode.sh"), { description = "Game Mode: performance toggle (anim/blur/DND)", locked = true })
     -- View tags directly (mirrors global SUPER+1-9):
     hl.bind("SUPER + 1", hl.dsp.focus({ workspace = "1" }), { description = "Game Mode: view tag 1", locked = true })
     hl.bind("SUPER + 2", hl.dsp.focus({ workspace = "2" }), { description = "Game Mode: view tag 2", locked = true })
@@ -305,3 +296,6 @@ hl.define_submap(SUBMAP_MANUAL_PT, function()
     hl.bind("SUPER + SHIFT + 8", hl.dsp.window.move({ workspace = "8", follow = true }), { description = "Game Mode: send to tag 8", locked = true })
     hl.bind("SUPER + SHIFT + 9", hl.dsp.window.move({ workspace = "9", follow = true }), { description = "Game Mode: send to tag 9", locked = true })
 end)
+-- Declared after the submap on purpose: DMS dedupes by key combo and keeps the
+-- LAST parsed ALT+grave, so the global "on" entry is what SUPER+H displays.
+hl.bind("ALT + grave", hl.dsp.exec_cmd("/home/fury/.config/hypr/scripts/GameModeBinds.sh on"), { description = "Game Mode: disable all keybinds (AoE parity)", locked = true })
