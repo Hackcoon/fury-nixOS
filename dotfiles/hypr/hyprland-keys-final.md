@@ -1,6 +1,6 @@
 # hyprland-keys-final — Fury Hyprland audit
 
-> Date: 2026-10-11 (v7 — ALT utility row 1-4, 193 binds).
+> Date: 2026-10-11 (v7 — ALT utility row 1-4, 194 binds).
 > Source of truth: `~/.config/hypr/dms/binds.lua` (DMS cheatsheet slot, `require`d by `hyprland.lua`) + `binds.lua` (retired archive) + `hyprland.lua` (env/autostart/rules).
 > Mango config untouched throughout. Apply = save file (Hyprland hot-reloads; full `hyprctl reload` if stacked).
 
@@ -76,7 +76,7 @@
 | `ALT + 3` | `hl.dsp.exec_cmd("pavucontrol")` | audio mixer popup |
 | `ALT + 4` | `hl.dsp.exec_cmd("kitty ... --class journal -e .../UserScripts/journalctl.py")` | journal explorer (fzf journalctl) |
 | `ALT + 5` | `hl.dsp.exec_cmd("kitty ... --class toolbox -e .../UserScripts/toolbox.sh")` | micro tools picker (fzf toolbox) |
-| `ALT + grave` | submap `keybinds_disabled` on/off (same key) | GAME MODE: all global binds off so keys reach the game (AoE; ALT+6 stays a game key); excepted: SUPER+Tab / SHIFT+Tab hop, SUPER+1-9 view, SUPER+SHIFT+1-9 send-follow, SUPER+U / SHIFT+U, SUPER+J / SHIFT+J / CTRL+J; notifications confirm state |
+| `ALT + grave` | submap `keybinds_disabled` on/off (same key) | GAME MODE: all global binds off so keys reach the game (AoE; ALT+6 stays a game key); excepted: SUPER+Tab / SHIFT+Tab hop, SUPER+1-9 view, SUPER+SHIFT+1-9 send-follow, SUPER+U / SHIFT+U, SUPER+J / SHIFT+J / CTRL+J, SUPER+SHIFT+G perf toggle; notifications confirm state |
 
 ## System
 | Chord | Action | Note |
